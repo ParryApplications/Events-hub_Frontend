@@ -12,6 +12,7 @@ import "./css/index.css";
 import Signup from "./components/Signup.jsx";
 import Login from "./components/Login.jsx";
 import AuthProvider from "./components/AuthContext.jsx";
+import Profile from "./components/Profile.jsx";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "profile",
+        element: <Profile />, //Just a placeholder for now
       },
     ],
   },

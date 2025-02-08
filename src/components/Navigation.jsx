@@ -13,7 +13,9 @@ export default function navigate() {
         <div className="routes-right-nav-div">
           <NavLink to={"/"}>Home</NavLink>
           {/* <NavLink to={"/events"}>Events</NavLink> */}
-          <NavLink to={"/profile"}>Profile</NavLink>
+          {isAuthenticated === true && (
+            <NavLink to={"/profile"}>Profile</NavLink>
+          )}
           {isAuthenticated === true ? (
             <button
               className="common-button-to-text"
@@ -21,6 +23,7 @@ export default function navigate() {
                 setIsAuthenticated(false);
                 setUserDetails({});
                 alert("Loggged out successfully");
+                navigate("/");
               }}
             >
               Logout

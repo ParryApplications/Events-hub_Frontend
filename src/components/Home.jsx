@@ -38,13 +38,16 @@ export default function Home() {
 
   //Run only once on component Mount
   useEffect(() => {
-    if (isAuthenticated === true) {
-      console.log("Authenticated User Detected");
-      loadAllEvents_ForLoggedInUsers();
-    } else {
-      console.log("Non-Authenticated User Detected");
-      loadAllEvents_ForNonLoggedInUser();
-    }
+    const checkIfUserAuthenticated = () => {
+      if (isAuthenticated === true) {
+        console.log("Authenticated User Detected");
+        loadAllEvents_ForLoggedInUsers();
+      } else {
+        console.log("Non-Authenticated User Detected");
+        loadAllEvents_ForNonLoggedInUser();
+      }
+    };
+    checkIfUserAuthenticated();
   }, [isAuthenticated]);
 
   /**
