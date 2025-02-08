@@ -1,4 +1,3 @@
-import axios from "axios";
 import { eventsHubApiClient } from "./CommonApiUtil";
 
 //API URL CONSTANTS:
@@ -7,6 +6,7 @@ const POST_SAVE_USER = "/user/api";
 const POST_USER_LOGIN = "/user/api/login";
 const GET_ALL_EVENTS_WITH_RSVP = "/event/api/rsvp/user/{userId}";
 const PUT_RSVP_BY_EVENTID_USERID = "/rsvp/api";
+const REMOVE_PAST_RSVPS_BY_USERID = "/rsvp/api/removePastEvents/{userId}";
 
 /**
  * Fetch all events from the server (without RSVP details)
@@ -86,5 +86,23 @@ export async function toggleRsvpStatus(rsvp) {
     await eventsHubApiClient.put(PUT_RSVP_BY_EVENTID_USERID, rsvp);
   } catch (err) {
     console.error(`Error while toggling RSVP status: ${err.message}`);
+  }
+}
+
+/**
+ * Method will delete all past RSVPs for a particular user and eventId
+ * @param {*} userId
+ * @returns
+ */
+export async function deletePastRsvpsByUserId(userId) {
+  try {
+    const response = await eventsHubApiClient.delete(
+      REMOVE_PAST_RSVPS_BY_USERID.replace("{userId}", userId)
+    );
+    console.log("Past RSVPs deleted successfully");
+    return response;
+  } catch (err) {
+    console.error(`Error while deleting past RSVPs by userId: ${err.message}`);
+    return false;
   }
 }
