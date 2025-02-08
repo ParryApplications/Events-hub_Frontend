@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     element: <App />, //contains Layout of the application
     children: [
       {
-        index: true, //Defaukt child
+        index: true, //Default child
         element: <Home />,
       },
       {

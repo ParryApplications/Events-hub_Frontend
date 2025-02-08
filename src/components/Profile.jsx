@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
 import EventCard from "./EventCard";
 import { getMyPostedEventsByUserId } from "../apis/restApis";
@@ -7,7 +7,10 @@ export default function Profile() {
   const { userDetails } = useAuth();
   const [myEvents, setMyEvents] = useState([]);
   const [isProfileTabActive, setProfileTabActive] = useState(true);
-  console.log(userDetails);
+  //   console.log(userDetails);
+
+  const profileButtonRef = useRef(null);
+  const myEventsButtonRef = useRef(null);
 
   useEffect(() => {
     const loadMyEvents = async () => {
@@ -25,18 +28,24 @@ export default function Profile() {
         className="toggle-profile-events-div"
         onClick={() => {
           setProfileTabActive((prevState) => !prevState);
-          document.getElementById("profile-button").classList.toggle("active");
-          document
-            .getElementById("my-events-button")
-            .classList.toggle("active");
+          if (profileButtonRef.current && myEventsButtonRef.current) {
+            profileButtonRef.current.classList.toggle(
+              "active",
+              isProfileTabActive
+            );
+            myEventsButtonRef.current.classList.toggle(
+              "active",
+              !isProfileTabActive
+            );
+          }
         }}
       >
-        <div id="profile-button" className="active common-button-to-text">
+        <button ref={profileButtonRef} className="active common-button-to-text">
           Profile
-        </div>
-        <div id="my-events-button" className="common-button-to-text">
+        </button>
+        <button ref={myEventsButtonRef} className="common-button-to-text">
           My Posted Events
-        </div>
+        </button>
       </div>
       <br />
 

@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navigation from "./components/Navigation.jsx";
 import Footer from "./components/Footer.jsx";
-import AuthProvider from "./components/AuthContext.jsx";
 
 // This contains the layout of the webapplication
 export default function App() {

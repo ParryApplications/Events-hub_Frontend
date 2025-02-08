@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { getUserDetailsByUserId } from "../apis/restApis";
 import eventCardImage from "../assets/Event_card_icon.png";
 import bellOffIcon from "../assets/bell-off.svg";
 import bellOnIcon from "../assets/bell-on.svg";
@@ -6,11 +8,26 @@ import { useAuth } from "./AuthContext";
 
 export default function EventCard({ event, updateEvent }) {
   const { userDetails, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    const fetchEventsPostedByUserDetails = async () => {
+      const eventUserDetails = await getUserDetailsByUserId(
+        event.postedByUserId
+      );
+      if (eventUserDetails) {
+        const { fullName } = eventUserDetails;
+        event.postedByFullName = fullName;
+      }
+    };
+
+    fetchEventsPostedByUserDetails();
+  }, []);
+
   return (
     <div className="event-card-div">
       <h3 className="event-title-h">{event.eventName}</h3>
       <p className="event-posted-details-p">
-        Posted On {event.postedOn}, By {event.postedByUserId}
+        Posted On {event.postedOn}, By {event.postedByFullName}
       </p>
       <div className="event-image-div">
         <img

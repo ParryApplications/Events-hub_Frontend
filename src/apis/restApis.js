@@ -8,6 +8,7 @@ const GET_ALL_EVENTS_WITH_RSVP = "/event/api/rsvp/user/{userId}";
 const PUT_RSVP_BY_EVENTID_USERID = "/rsvp/api";
 const REMOVE_PAST_RSVPS_BY_USERID = "/rsvp/api/removePastEvents/{userId}";
 const GET_MY_POSTED_EVENTS_BY_USERID = "/event/api/user/{userId}";
+const GET_USER_DETAILS_BY_USERID = "/user/api/{userId}";
 
 /**
  * Fetch all events from the server (without RSVP details)
@@ -108,6 +109,11 @@ export async function deletePastRsvpsByUserId(userId) {
   }
 }
 
+/**
+ * Method will return all evetns posted by particular given user
+ * @param {*} userId
+ * @returns
+ */
 export async function getMyPostedEventsByUserId(userId) {
   try {
     const response = await eventsHubApiClient.get(
@@ -119,6 +125,26 @@ export async function getMyPostedEventsByUserId(userId) {
   } catch (err) {
     console.error(
       `Error while fetching my posted events by userId: ${err.message}`
+    );
+    return undefined;
+  }
+}
+
+/**
+ * Method will return userDetails by UserId
+ * @param {*} userId
+ * @returns
+ */
+export async function getUserDetailsByUserId(userId) {
+  try {
+    const response = await eventsHubApiClient.get(
+      GET_USER_DETAILS_BY_USERID.replace("{userId}", userId)
+    );
+    // console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error(
+      `Error while fetching user details by userId: ${err.message}`
     );
     return undefined;
   }
