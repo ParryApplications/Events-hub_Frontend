@@ -1,5 +1,6 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
+import { logout } from "../apis/restApis";
 
 export default function Navigation() {
   const { isAuthenticated, setIsAuthenticated, setUserDetails } = useAuth();
@@ -23,6 +24,7 @@ export default function Navigation() {
               onClick={() => {
                 setIsAuthenticated(false);
                 setUserDetails({});
+                logout();
                 navigate("/");
                 alert("Loggged out successfully");
               }}

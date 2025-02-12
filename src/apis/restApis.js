@@ -1,7 +1,9 @@
 import { eventsHubApiClient } from "./CommonApiUtil";
 
 //API URL CONSTANTS:
-const GET_ALL_EVENTS = "/event/api"; //Calls with no login
+const EVENT_BASE_URL = "/event/api";
+const UPDATE_EVENT = EVENT_BASE_URL + "/{eventId}";
+const DELETE_EVENT_BY_EVENTID = EVENT_BASE_URL + "/{eventId}";
 const POST_SAVE_USER = "/user/api";
 const POST_USER_LOGIN = "/user/api/login";
 const GET_ALL_EVENTS_WITH_RSVP = "/event/api/rsvp/user/{userId}";
@@ -17,7 +19,7 @@ const GET_USER_DETAILS_BY_USERID = "/user/api/{userId}";
  */
 export async function getAllEvents() {
   try {
-    const response = await eventsHubApiClient.get(GET_ALL_EVENTS);
+    const response = await eventsHubApiClient.get(EVENT_BASE_URL);
     // console.log(response.data);
     return response.data;
   } catch (err) {
@@ -56,6 +58,18 @@ export async function login(user) {
   } catch (err) {
     console.error(`Error while validating user: ${err.message}`);
     return false;
+  }
+}
+
+/**
+ * Method will delete the Authorization header, to not use credentials further
+ */
+export async function logout() {
+  try {
+    delete eventsHubApiClient.defaults.headers["Authorization"];
+    console.log("Logged out successfully");
+  } catch (err) {
+    console.error(`Error while logging out: ${err.message}`);
   }
 }
 
@@ -147,5 +161,58 @@ export async function getUserDetailsByUserId(userId) {
       `Error while fetching user details by userId: ${err.message}`
     );
     return undefined;
+  }
+}
+
+/**
+ * Method will create new event and return it's details, if any issue, return false
+ * @param {*} event
+ * @returns
+ */
+export async function postNewEvent(event) {
+  try {
+    const response = await eventsHubApiClient.post(EVENT_BASE_URL, event);
+    console.log("New event posted successfully");
+    return response.data;
+  } catch (err) {
+    console.error(`Error while posting new event: ${err.message}`);
+    return false;
+  }
+}
+
+/**
+ * Method will update event and return it's details, if any issue, return false
+ * @param {*} event
+ * @returns
+ */
+export async function updateEvent(event) {
+  try {
+    const response = await eventsHubApiClient.put(
+      UPDATE_EVENT.replace("{eventId}", event.eventId),
+      event
+    );
+    console.log("Event updated successfully");
+    return response.data;
+  } catch (err) {
+    console.error(`Error while updating event: ${err.message}`);
+    return false;
+  }
+}
+
+/**
+ * Method will delete event by EventId and return true or false, if any issue, return false
+ * @param {*} eventId
+ * @returns
+ */
+export async function deleteEventByEventId(eventId) {
+  try {
+    await eventsHubApiClient.delete(
+      DELETE_EVENT_BY_EVENTID.replace("{eventId}", eventId)
+    );
+    console.log("Event deleted successfully");
+    return true;
+  } catch (err) {
+    console.error(`Error while deleting event by eventId: ${err.message}`);
+    return false;
   }
 }

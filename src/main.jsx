@@ -24,7 +24,11 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "event/add",
+        path: "addEvent",
+        element: <AddEditEventForm />,
+      },
+      {
+        path: "editEvent",
         element: <AddEditEventForm />,
       },
       {

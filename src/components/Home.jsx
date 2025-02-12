@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import EventCard from "./EventCard";
 import EventPartialCard from "./EventPartialCard";
 import EventPPastCard from "./EventPPastCard";
@@ -9,11 +9,21 @@ import {
   getSortedEventsByEventDate,
   isPastEvent,
 } from "../utility/CommonUtility";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const { userDetails, isAuthenticated } = useAuth();
   const [eventList, setEventList] = useState([]);
 
+  const postEventFieldRef = useRef(null);
+
+  const navigate = useNavigate();
+
+  /**
+   * Method will return the list of events posted by all so far,
+   * This will fetch details as per the Non-Logged in user
+   * List will be Sorted by Event Date
+   */
   async function loadAllEvents_ForNonLoggedInUser() {
     const allEvents = await getAllEvents();
 
@@ -25,6 +35,11 @@ export default function Home() {
     }
   }
 
+  /**
+   * Method will return the list of events posted by all so far,
+   * This will fetch details as per the Logged in user
+   * List will be Sorted by Event Date
+   */
   async function loadAllEvents_ForLoggedInUsers() {
     const allRsvpEvents = await getAllEventsWithRsvpStatus(userDetails?.userId);
 
@@ -62,18 +77,78 @@ export default function Home() {
     );
   }
 
+  /**
+   * Method will remove an deleted event from the eventList based on the eventId.
+   * This will re-render the Home.jsx component.
+   * @param {*} deletedEventId
+   */
+  function deleteEventFromList(deletedEventId) {
+    setEventList((prevEvents) =>
+      prevEvents.filter((event) => event.eventId !== deletedEventId)
+    );
+  }
+
+  /**
+   * Method contains logic which hits once post event button if clicked
+   * Logic: sends the event Title into event form component, and ask other necessary event details
+   */
+  function onPostEventBtnHandler() {
+    if (
+      postEventFieldRef.current &&
+      postEventFieldRef.current.value.trim() != ""
+    ) {
+      const event = {
+        eventName: postEventFieldRef.current.value,
+      };
+      // postEventFieldRef.current.value = "";
+      navigate("/addEvent", { state: { event } });
+    }
+  }
+
+  /**
+   * Method will invoke if user fill something under the post event field and hit "Enter"
+   * @param {*} event
+   */
+  function onKeyDownHandler(event) {
+    if (event.key === "Enter") {
+      onPostEventBtnHandler();
+    }
+  }
+
   return (
     <div className="home-div">
       <div className="events-cards-div">
         {eventList.map((e) => (
-          <EventCard key={e.eventId} event={e} updateEvent={updateEventList} />
+          <EventCard
+            key={e.eventId}
+            event={e}
+            updateEvent={updateEventList}
+            deleteEventFromList={deleteEventFromList}
+          />
         ))}
       </div>
 
       <div className="right-home-div">
+        <div className="post-event-div">
+          <input
+            type="text"
+            name="postEventField"
+            ref={postEventFieldRef}
+            placeholder="Know any upcoming event?"
+            className="post-event-field-input"
+            onKeyDown={onKeyDownHandler}
+          />
+          <button
+            className="post-event-submit-button"
+            onClick={onPostEventBtnHandler}
+          >
+            Post
+          </button>
+        </div>
+
         <div className="interested-upcoming-events-div">
           <h3 className="interested-upcoming-events-div-h">
-            Intrested Upcoming Events
+            Subscribed Upcoming Events
           </h3>
           {isAuthenticated &&
             eventList

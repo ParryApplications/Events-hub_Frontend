@@ -38,7 +38,7 @@
   border-radius: 8px;
   padding: 8px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  width: 100%;
+
   width: 28vmax;
   margin: 10px auto;
   transition: 0.3s;
@@ -252,3 +252,29 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Post event home and Form page START */
+
+.post-event-div {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post-event-field-input {
+  flex: 1;
+  padding: 2px 5px;
+}
+
+.post-event-submit-button {
+  padding: 2px 5px;
+  cursor: pointer;
+}
+
+.event-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* Post event home and Form page END */
