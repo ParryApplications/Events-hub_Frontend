@@ -13,19 +13,23 @@
 }
 
 .interested-upcoming-events-div {
-  /* border: 2px solid black; */
   padding: 4px 8px;
-  height: 50vh;
   background-color: rgb(240, 239, 239);
   border-radius: 12px;
-  overflow-y: auto;
   margin: 20px 0px;
+}
+
+.intrested-upcoming-event-sub-div {
+  overflow-y: auto;
+  /* Setting below height dynamically */
+  /* max-height: 50vh; */
 }
 
 .interested-upcoming-events-div-h {
   background-color: #c9c6c6;
   border-radius: 8px;
   padding: 2px 2px;
+  margin-bottom: 2px;
 }
 
 /* Event Partial Card Start*/
@@ -278,3 +282,7 @@
   align-items: center;
 }
 /* Post event home and Form page END */
+
+/* POP_UP START */
+
+/* POP_UP END */

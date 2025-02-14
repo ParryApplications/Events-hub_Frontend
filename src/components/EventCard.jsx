@@ -9,7 +9,11 @@ import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import ContextMenu from "./ContextMenu";
 
-export default function EventCard({ event, updateEvent, deleteEventFromList }) {
+export default function EventCard({
+  event,
+  updateEvent,
+  deleteEventFromList,
+}) {
   const { userDetails, isAuthenticated } = useAuth();
   const [contextMenu, setContextMenu] = useState({
     visible: false,

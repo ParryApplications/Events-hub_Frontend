@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import EventCard from "./EventCard";
 import EventPartialCard from "./EventPartialCard";
 import EventPPastCard from "./EventPPastCard";
@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 export default function Home() {
   const { userDetails, isAuthenticated } = useAuth();
   const [eventList, setEventList] = useState([]);
+  const [hasSubscribedEvent, setHasSubscribedEvent] = useState(false);
+  const [hasPastEvent, setHasPastEvent] = useState(false);
 
   const postEventFieldRef = useRef(null);
 
@@ -148,29 +150,45 @@ export default function Home() {
 
         <div className="interested-upcoming-events-div">
           <h3 className="interested-upcoming-events-div-h">
-            Subscribed Upcoming Events
+            Subscribed Events
           </h3>
-          {isAuthenticated &&
-            eventList
-              .filter((e) => e?.status && !isPastEvent(e.eventDate))
-              .map((e) => (
-                <EventPartialCard
-                  key={e.eventId}
-                  event={e}
-                  updateEvent={updateEventList}
-                />
-              ))}
+          <div
+            className="intrested-upcoming-event-sub-div"
+            style={{
+              maxHeight: isAuthenticated && hasSubscribedEvent ? "50vh" : "0vh",
+            }}
+          >
+            {isAuthenticated &&
+              eventList
+                .filter((e) => e?.status && !isPastEvent(e.eventDate))
+                .map((e) => {
+                  if (!hasSubscribedEvent) setHasSubscribedEvent(true);
+
+                  return (
+                    <EventPartialCard
+                      key={e.eventId}
+                      event={e}
+                      updateEvent={updateEventList}
+                    />
+                  );
+                })}
+          </div>
         </div>
 
-        <div className="past-events-div interested-upcoming-events-div">
-          <h3 className="past-events-div-h interested-upcoming-events-div-h">
-            Past Events
-          </h3>
-          {eventList
-            .filter((e) => isPastEvent(e.eventDate))
-            .map((e) => (
-              <EventPPastCard key={e.eventId} event={e} />
-            ))}
+        <div className="interested-upcoming-events-div">
+          <h3 className="interested-upcoming-events-div-h">Past Events</h3>
+          <div
+            className="intrested-upcoming-event-sub-div"
+            style={{ maxHeight: hasPastEvent ? "50vh" : "0vh" }}
+          >
+            {eventList
+              .filter((e) => isPastEvent(e.eventDate))
+              .map((e) => {
+                if (!hasPastEvent) setHasPastEvent(true);
+
+                return <EventPPastCard key={e.eventId} event={e} />;
+              })}
+          </div>
         </div>
       </div>
     </div>

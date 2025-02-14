@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
 import EventCard from "./EventCard";
 import { getMyPostedEventsByUserId } from "../apis/restApis";
@@ -78,16 +78,28 @@ const ProfileContent = ({ userDetails }) => {
 
 const PostedEventsContent = ({ myEvents, setMyEvents }) => {
   /**
+   * Method will remove an deleted event from the eventList based on the eventId.
+   * This will re-render the Home.jsx component.
+   * @param {*} deletedEventId
+   */
+  function deleteEventFromList(deletedEventId) {
+    setMyEvents((prevEvents) =>
+      prevEvents.filter((event) => event.eventId !== deletedEventId)
+    );
+  }
+
+  /**
    * Method will update an event under the eventList state object
    * @param updatedEvent
    */
-  function updateEventList(updatedEvent) {
+  const updateEventList = useCallback((updatedEvent) => {
+    console.log("Updating eventList function called!");
     setMyEvents((prevEvents) =>
       prevEvents.map((event) =>
         event.eventId === updatedEvent.eventId ? updatedEvent : event
       )
     );
-  }
+  }, []);
 
   return (
     <>
@@ -98,6 +110,7 @@ const PostedEventsContent = ({ myEvents, setMyEvents }) => {
             key={event.eventId}
             event={event}
             updateEvent={updateEventList}
+            deleteEventFromList={deleteEventFromList}
           />
         ))}
     </>
