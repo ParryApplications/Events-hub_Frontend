@@ -42,7 +42,7 @@
   border-radius: 8px;
   padding: 8px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-
+  cursor: pointer;
   width: 28vmax;
   margin: 10px auto;
   transition: 0.3s;
@@ -186,6 +186,7 @@
   width: 28vmax;
   margin: 10px auto;
   transition: 0.3s;
+  cursor: pointer;
 }
 
 .event-p-past-card-div:hover {

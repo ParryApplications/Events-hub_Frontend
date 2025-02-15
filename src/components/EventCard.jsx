@@ -13,6 +13,7 @@ export default function EventCard({
   event,
   updateEvent,
   deleteEventFromList,
+  customRef,
 }) {
   const { userDetails, isAuthenticated } = useAuth();
   const [contextMenu, setContextMenu] = useState({
@@ -80,6 +81,7 @@ export default function EventCard({
   return (
     <>
       <div
+        ref={customRef}
         className="event-card-div"
         onContextMenu={(e) =>
           userDetails.userId === event.postedByUserId && handleContextMenu(e)

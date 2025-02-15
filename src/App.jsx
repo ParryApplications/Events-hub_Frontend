@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navigation from "./components/Navigation.jsx";
 import Footer from "./components/Footer.jsx";
+import ScrollProvider from "./components/ScrollContext.jsx";
 
 // This contains the layout of the webapplication
 export default function App() {
@@ -11,7 +12,9 @@ export default function App() {
       </header>
 
       <main>
-        <Outlet />
+        <ScrollProvider>
+          <Outlet />
+        </ScrollProvider>
       </main>
 
       <footer>

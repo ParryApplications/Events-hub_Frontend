@@ -1,8 +1,14 @@
 import eventPCardImage from "../assets/Event_icon.png";
+import { useScrollContext } from "./ScrollContext";
 
 export default function EventPPastCard({ event }) {
+  const { scrollToEvent } = useScrollContext();
+
   return (
-    <div className="event-p-past-card-div">
+    <div
+      className="event-p-past-card-div"
+      onClick={() => scrollToEvent(event.eventId)}
+    >
       <img
         className="event-image-img"
         src={event.imageUrl || eventPCardImage}

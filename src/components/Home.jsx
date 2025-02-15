@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import EventCard from "./EventCard";
 import EventPartialCard from "./EventPartialCard";
 import EventPPastCard from "./EventPPastCard";
@@ -10,6 +10,7 @@ import {
   isPastEvent,
 } from "../utility/CommonUtility";
 import { useNavigate } from "react-router-dom";
+import ScrollProvider, { useScrollContext } from "./ScrollContext";
 
 export default function Home() {
   const { userDetails, isAuthenticated } = useAuth();
@@ -18,6 +19,8 @@ export default function Home() {
   const [hasPastEvent, setHasPastEvent] = useState(false);
 
   const postEventFieldRef = useRef(null);
+
+  const { eventRefs } = useScrollContext();
 
   const navigate = useNavigate();
 
@@ -126,6 +129,7 @@ export default function Home() {
             event={e}
             updateEvent={updateEventList}
             deleteEventFromList={deleteEventFromList}
+            customRef={(el) => (eventRefs.current[e.eventId] = el)}
           />
         ))}
       </div>

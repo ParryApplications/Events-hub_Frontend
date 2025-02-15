@@ -1,14 +1,19 @@
 import eventPCardImage from "../assets/Event_icon.png";
 import bellOffIcon from "../assets/bell-off.svg";
 import bellOnIcon from "../assets/bell-on.svg";
-import { isPastEvent, onRsvpButtonClick } from "../utility/CommonUtility";
+import { onRsvpButtonClick } from "../utility/CommonUtility";
 import { useAuth } from "./AuthContext";
+import { useScrollContext } from "./ScrollContext";
 
 export default function EventPartialCard({ event, updateEvent }) {
   const { userDetails, isAuthenticated } = useAuth();
+  const { scrollToEvent } = useScrollContext();
 
   return (
-    <div className="event-pcard-div">
+    <div
+      className="event-pcard-div"
+      onClick={() => scrollToEvent(event.eventId)}
+    >
       <img
         className="event-image-img"
         src={event.imageUrl || eventPCardImage}
