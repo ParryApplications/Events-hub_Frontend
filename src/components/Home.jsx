@@ -10,7 +10,7 @@ import {
   isPastEvent,
 } from "../utility/CommonUtility";
 import { useNavigate } from "react-router-dom";
-import ScrollProvider, { useScrollContext } from "./ScrollContext";
+import { useScrollContext } from "./ScrollContext";
 
 export default function Home() {
   const { userDetails, isAuthenticated } = useAuth();
@@ -98,6 +98,12 @@ export default function Home() {
    * Logic: sends the event Title into event form component, and ask other necessary event details
    */
   function onPostEventBtnHandler() {
+    if (!isAuthenticated) {
+      alert("Please first log in to add or update events.");
+      navigate("/signup");
+      return;
+    }
+
     if (
       postEventFieldRef.current &&
       postEventFieldRef.current.value.trim() != ""

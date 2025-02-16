@@ -62,6 +62,7 @@ export default function AddEditEventForm() {
       }
     } else {
       values.postedByUserId = userDetails.userId;
+      values.postedByFullName = userDetails.fullName;
       const response = await postNewEvent(values);
       if (response) {
         alert("Event added successfully!");

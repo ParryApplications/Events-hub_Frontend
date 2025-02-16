@@ -3,7 +3,8 @@ import { useAuth } from "./AuthContext";
 import { logout } from "../apis/restApis";
 
 export default function Navigation() {
-  const { isAuthenticated, setIsAuthenticated, setUserDetails } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, setUserDetails, userDetails } =
+    useAuth();
   const navigate = useNavigate();
   return (
     <>
@@ -23,8 +24,9 @@ export default function Navigation() {
               className="common-button-to-text"
               onClick={() => {
                 setIsAuthenticated(false);
+                console.log("User Details before logout : ", userDetails);
                 setUserDetails({});
-                logout();
+                logout(); //Remove Authorization headers
                 navigate("/");
                 alert("Loggged out successfully");
               }}

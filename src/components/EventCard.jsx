@@ -23,24 +23,6 @@ export default function EventCard({
   });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchEventsPostedByUserDetails = async () => {
-      const eventUserDetails = await getUserDetailsByUserId(
-        event.postedByUserId
-      );
-      if (eventUserDetails) {
-        const { fullName } = eventUserDetails;
-        const updatedEventWithUserDetails = {
-          ...event,
-          postedByFullName: fullName,
-        };
-        updateEvent(updatedEventWithUserDetails);
-      }
-    };
-
-    fetchEventsPostedByUserDetails();
-  }, [event?.eventId]);
-
   /**
    * Method handled onContextMenu event (Right Click event)
    * @param {*} e
