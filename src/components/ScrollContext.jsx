@@ -10,11 +10,9 @@ export default function ScrollProvider({ children }) {
    * @param {string} eventId
    */
   const scrollToEvent = (eventId) => {
-    console.log("Scroll to event", eventId);
     if (eventRefs.current && eventRefs.current[eventId]) {
       eventRefs.current[eventId].scrollIntoView({
         behavior: "smooth",
-        block: "center",
       });
     }
   };

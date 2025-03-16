@@ -1,0 +1,34 @@
+@media (max-width: 768px) {
+  .custom-responsive-normal-text {
+    font-size: 13px;
+  }
+
+  form span {
+    font-size: 13px;
+  }
+
+  form label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  footer {
+    font-size: 13px;
+  }
+
+  footer img {
+    width: 30px;
+  }
+
+  .custom-responsive-normal-icon {
+    width: 20px;
+  }
+
+  .custom-responsive-normal-img {
+    width: 80px;
+  }
+}
+
+/* Screen where grid single view show */
+@media (max-width: 991px) {
+}

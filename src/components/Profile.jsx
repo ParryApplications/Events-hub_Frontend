@@ -2,17 +2,24 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
 import EventCard from "./EventCard";
 import { getMyPostedEventsByUserId } from "../apis/restApis";
+import profileImg from "../assets/neutral-profile-img.png";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Profile() {
-  const { userDetails } = useAuth();
+  const { userDetails, isAuthenticated } = useAuth();
   const [myEvents, setMyEvents] = useState([]);
   const [isProfileTabActive, setProfileTabActive] = useState(true);
+  const navigate = useNavigate();
   //   console.log(userDetails);
 
   const profileButtonRef = useRef(null);
   const myEventsButtonRef = useRef(null);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/");
+    }
+
     const loadMyEvents = async () => {
       const eventsList = await getMyPostedEventsByUserId(userDetails?.userId);
       if (eventsList) {
@@ -20,59 +27,133 @@ export default function Profile() {
       }
     };
     loadMyEvents();
-  }, [userDetails]);
+  }, []);
 
   return (
-    <div className="profile-main-div">
-      <div
-        className="toggle-profile-events-div"
-        onClick={() => {
-          setProfileTabActive((prevState) => !prevState);
-          if (profileButtonRef.current && myEventsButtonRef.current) {
-            profileButtonRef.current.classList.toggle(
-              "active",
-              isProfileTabActive
-            );
-            myEventsButtonRef.current.classList.toggle(
-              "active",
-              !isProfileTabActive
-            );
-          }
-        }}
-      >
-        <button ref={profileButtonRef} className="active common-button-to-text">
-          Profile
-        </button>
-        <button ref={myEventsButtonRef} className="common-button-to-text">
-          My Posted Events
-        </button>
+    <>
+      <div className="d-flex justify-content-center">
+        <div className="d-flex w-50">
+          <button
+            ref={profileButtonRef}
+            className="btn btn-primary round-left p-2 flex-grow-1"
+            onClick={() => {
+              setProfileTabActive(true);
+              if (profileButtonRef.current && myEventsButtonRef.current) {
+                profileButtonRef.current.classList.add("btn-primary");
+                profileButtonRef.current.classList.remove(
+                  "btn-outline-primary"
+                );
+                myEventsButtonRef.current.classList.remove("btn-primary");
+                myEventsButtonRef.current.classList.add("btn-outline-primary");
+              }
+            }}
+          >
+            Profile
+          </button>
+          <button
+            ref={myEventsButtonRef}
+            className="btn btn-outline-primary round-right p-2 flex-grow-1"
+            onClick={() => {
+              setProfileTabActive(false);
+              if (profileButtonRef.current && myEventsButtonRef.current) {
+                profileButtonRef.current.classList.remove("btn-primary");
+                profileButtonRef.current.classList.add("btn-outline-primary");
+                myEventsButtonRef.current.classList.add("btn-primary");
+                myEventsButtonRef.current.classList.remove(
+                  "btn-outline-primary"
+                );
+              }
+            }}
+          >
+            Events
+          </button>
+        </div>
       </div>
-      <br />
 
-      <div className="content-div">
+      <hr className="container" />
+
+      <div className="my-2">
         {isProfileTabActive ? (
           <ProfileContent userDetails={userDetails} />
         ) : (
           <PostedEventsContent myEvents={myEvents} setMyEvents={setMyEvents} />
         )}
       </div>
-      <hr />
-    </div>
+    </>
   );
 }
 
 const ProfileContent = ({ userDetails }) => {
   return (
-    <>
-      <h1>Profile</h1>
-      <p>Welcome {userDetails.fullName},</p>
-      <p>Email: {userDetails.email}</p>
-      <p>Bio: {userDetails.bio}</p>
-      <p>
-        Member since: {new Date(userDetails.createdAt).toLocaleDateString()}
-      </p>
-      <p>ROLE: {userDetails.role}</p>
-    </>
+    <div className="rounded-4 mx-2 card p-3 d-flex flex-column gap-1 align-items-center">
+      <img
+        className="img-fluid custom-responsive-normal-img"
+        src={profileImg}
+        alt="Default Profile Image"
+        width={200}
+      />
+
+      <h4 className="my-1">Welcome {userDetails.fullName},</h4>
+
+      <div className="d-flex flex-column gap-3 mt-4">
+        <div>
+          <label htmlFor="emailFieldId">Email</label>
+          <input
+            id="emailFieldId"
+            disabled={true}
+            className="form-control shadow-sm"
+            name="email"
+            value={userDetails.email}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="usernameFieldId">Username</label>
+          <div className="input-group">
+            <span className="input-group-text shadow-sm">@</span>
+            <input
+              id="usernameFieldId"
+              type="text"
+              disabled={true}
+              className="form-control shadow-sm"
+              name="username"
+              value={userDetails.username}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="bioFiieldId">About</label>
+          <input
+            id="bioFiieldId"
+            disabled={true}
+            className="form-control shadow-sm"
+            name="bio"
+            value={userDetails.bio}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="roleFieldId">Role</label>
+          <input
+            id="roleFieldId"
+            disabled={true}
+            className="form-control shadow-sm"
+            name="role"
+            value={userDetails.role}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="mt-5 btn btn-primary border border-2  shadow-lg"
+          // disabled={formik.isSubmitting}
+          disabled={true}
+        >
+          Modify
+        </button>
+      </div>
+    </div>
   );
 };
 
@@ -103,7 +184,6 @@ const PostedEventsContent = ({ myEvents, setMyEvents }) => {
 
   return (
     <>
-      <h1>My Posted Events</h1>
       {myEvents &&
         myEvents.map((event) => (
           <EventCard

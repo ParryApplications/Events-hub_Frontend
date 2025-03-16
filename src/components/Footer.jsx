@@ -1,39 +1,45 @@
+import { Link } from "react-router-dom";
+import EventIcon from "../assets/app-logo-icon.png";
+
 export default function Footer() {
   return (
     <>
-      <a
-        href="https://iconscout.com/icons/events"
-        className="text-underline font-size-sm"
-        target="_blank"
+      <p className="col-md-4 mb-0 text-muted">© 2023 ParryApplications, Inc.</p>
+
+      <Link
+        to="/"
+        className="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
       >
-        Icons
-      </a>{" "}
-      by{" "}
-      <a
-        href="https://iconscout.com/contributors/vectors-tank"
-        className="text-underline font-size-sm"
-        target="_blank"
-      >
-        Vectors Tank
-      </a>
-      <a
-        href="https://iconscout.com/illustrations/events"
-        className="text-underline font-size-sm"
-        target="_blank"
-      >
-        Event Card
-      </a>{" "}
-      by{" "}
-      <a
-        href="https://iconscout.com/contributors/north-star"
-        className="text-underline font-size-sm"
-      >
-        Optima GFX
-      </a>{" "}
-      on{" "}
-      <a href="https://iconscout.com" className="text-underline font-size-sm">
-        IconScout
-      </a>
+        <img src={EventIcon} width="40" className="bi me-2" alt="App Icon" />
+      </Link>
+
+      <ul className="nav col-md-4 justify-content-end">
+        <li className="nav-item">
+          <Link to="/" className="nav-link px-2 text-muted">
+            Home
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link to="/profile" className="nav-link px-2 text-muted">
+            Profile
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link to="/" className="nav-link px-2 text-muted">
+            Events
+          </Link>
+        </li>
+        <li className="nav-item">
+          <a href="#accordion-hr-start" className="nav-link px-2 text-muted">
+            FAQs
+          </a>
+        </li>
+        <li className="nav-item">
+          <Link to="/about" className="nav-link px-2 text-muted">
+            About
+          </Link>
+        </li>
+      </ul>
     </>
   );
 }

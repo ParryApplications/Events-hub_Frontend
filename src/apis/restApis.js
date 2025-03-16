@@ -20,7 +20,7 @@ const GET_USER_DETAILS_BY_USERID = "/user/api/{userId}";
 export async function getAllEvents() {
   try {
     const response = await eventsHubApiClient.get(EVENT_BASE_URL);
-    // console.log(response.data);
+    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error(`Error while fetching all events: ${err.message}`);
@@ -62,7 +62,7 @@ export async function login(user) {
 }
 
 /**
- * Method will delete the Authorization header, to not use credentials further
+ * Method will delete the Authorizatison header, to not use credentials further
  */
 export async function logout() {
   try {

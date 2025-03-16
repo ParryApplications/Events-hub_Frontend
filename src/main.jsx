@@ -1,18 +1,20 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./components/Home.jsx";
 import AddEditEventForm from "./components/AddEditEventForm.jsx";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./css/App.css";
-import "./css/Footer.css";
-import "./css/Header.css";
+import "./css/media.css";
 import "./css/index.css";
 import Signup from "./components/Signup.jsx";
 import Login from "./components/Login.jsx";
 import AuthProvider from "./components/AuthContext.jsx";
 import Profile from "./components/Profile.jsx";
+import ScrollProvider from "./components/ScrollContext.jsx";
+import NotFound from "./components/NotFound.jsx";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +23,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true, //Default child
-        element: <Home />,
+        element: (
+          <ScrollProvider>
+            <Home />
+          </ScrollProvider>
+        ),
       },
       {
         path: "addEvent",
@@ -45,20 +51,20 @@ const router = createBrowserRouter([
       },
       {
         path: "profile",
-        element: <Profile />, //Just a placeholder for now
+        element: <Profile />,
       },
     ],
   },
   {
     path: "*",
-    element: <div>Page not found</div>,
+    element: <NotFound />,
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
-  </StrictMode>
+  // <StrictMode>
+  <AuthProvider>
+    <RouterProvider router={router} />
+  </AuthProvider>
+  // </StrictMode>
 );

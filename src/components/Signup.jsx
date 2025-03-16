@@ -1,4 +1,4 @@
-import { Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import { saveUser } from "../apis/restApis";
 import { useNavigate } from "react-router-dom";
@@ -8,15 +8,14 @@ export default function Signup() {
 
   //Form Validations:
   const validFormSchema = Yup.object({
-    fullName: Yup.string().required("Full Name is required"),
+    fullName: Yup.string().required("Full Name is Required"),
     email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
+      .email("Invalid Email Address")
+      .required("Email is Required"),
     username: Yup.string().required("Username is required"),
     password: Yup.string()
       .min(10, "Password must be at least 10 characters")
-      .required("Password is required"),
-    // contact: Yup.string().matches(/^\d{10}$/, "Invalid Contact Number"),
+      .required("Password is Required"),
     bio: Yup.string(),
   });
 
@@ -40,107 +39,150 @@ export default function Signup() {
       bio: "",
     },
     validateOnBlur: true,
-    validateOnChange: false,
+    validateOnChange: true,
     validationSchema: validFormSchema,
     onSubmit: submitFormHandler,
   });
 
   return (
-    <div className="user-form-div">
-      <h1>Welcome in our Events Hub App</h1>
-      {/* Signup form */}
+    <div className="container card align-items-center justify-content-center bg-app-theme border border-3">
+      {/* <h2>Welcome in our Events Hub App</h2>
+      Signup form */}
+      <form
+        onSubmit={formik.handleSubmit}
+        className="row col-12 col-lg-5 gy-2 p-5"
+        noValidate
+      >
+        <div>
+          <label htmlFor="fullNameFieldId" className="form-label">
+            Full Name*
+          </label>
+          <input
+            id="fullNameFieldId"
+            type="text"
+            name="fullName"
+            autoComplete="name"
+            className={`form-control ${
+              formik.touched.fullName && formik.errors.fullName
+                ? "is-invalid"
+                : formik.values.fullName.trim() !== ""
+                ? "is-valid"
+                : ""
+            } shadow-sm`}
+            value={formik.values.fullName}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+          />
 
-      <form onSubmit={formik.handleSubmit} className="user-form" noValidate>
-        <input
-          type="text"
-          name="fullName"
-          placeholder="Full Name"
-          value={formik.values.fullName}
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-        />
-        {formik.touched.fullName && formik.errors.fullName && (
-          <span className="form-field-error-span">
-            {formik.errors.fullName}
-          </span>
-        )}
+          <span className="invalid-feedback">{formik.errors.fullName}</span>
+        </div>
+        <div>
+          <label htmlFor="emailFieldId" className="form-label">
+            Email*
+          </label>
+          <input
+            id="emailFieldId"
+            type="email"
+            autoComplete="email"
+            className={`form-control ${
+              formik.touched.email && formik.errors.email
+                ? "is-invalid"
+                : formik.values.email.trim() !== ""
+                ? "is-valid"
+                : ""
+            }  shadow-sm`}
+            name="email"
+            placeholder="name@example.com"
+            value={formik.values.email}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+          />
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formik.values.email}
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-        />
+          <span className="invalid-feedback">{formik.errors.email}</span>
+          <span className="valid-feedback">Looks Good</span>
+        </div>
+        <div>
+          <label htmlFor="usernameFieldId" className="form-label">
+            Username*
+          </label>
+          <div className="input-group">
+            <span className="input-group-text shadow-sm">@</span>
+            <input
+              id="usernameFieldId"
+              type="text"
+              autoComplete="username"
+              className={`form-control ${
+                formik.touched.username && formik.errors.username
+                  ? "is-invalid"
+                  : formik.values.username.trim() !== ""
+                  ? "is-valid"
+                  : ""
+              } shadow-sm`}
+              name="username"
+              value={formik.values.username}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+            />
+            <span className="invalid-feedback">{formik.errors.username}</span>
+          </div>
+        </div>
 
-        {formik.touched.email && formik.errors.email && (
-          <span className="form-field-error-span">{formik.errors.email}</span>
-        )}
+        <div>
+          <label htmlFor="passwordFieldId" className="form-label">
+            Password*
+          </label>
+          <input
+            id="passwordFieldId"
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            className={`form-control ${
+              formik.touched.password && formik.errors.password
+                ? "is-invalid"
+                : formik.values.password.trim() !== ""
+                ? "is-valid"
+                : ""
+            } shadow-sm`}
+            value={formik.values.password}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+          />
 
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={formik.values.username}
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-        />
+          <span className="invalid-feedback">{formik.errors.password}</span>
+          <span className="valid-feedback">Looks Good</span>
+        </div>
+        <div>
+          <label htmlFor="bioFieldId" className="form-label">
+            About
+          </label>
+          <input
+            id="bioFieldId"
+            type="text"
+            className={`form-control ${
+              formik.touched.bio && formik.errors.bio ? "is-invalid" : ""
+            } shadow-sm`}
+            name="bio"
+            value={formik.values.bio}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+          />
 
-        {formik.touched.username && formik.errors.username && (
-          <span className="form-field-error-span">
-            {formik.errors.username}
-          </span>
-        )}
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formik.values.password}
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-        />
-
-        {formik.touched.password && formik.errors.password && (
-          <span className="form-field-error-span">
-            {formik.errors.password}
-          </span>
-        )}
-
-        {/* <input
-          type="number"
-          name="contact"
-          placeholder="XXXXXXXXXX"
-          value={formik.values.contact}
-          onBlur={formik.handleBlur}
-           onChange={formik.handleChange}
-        />
-
-        {formik.touched.contact && formik.errors.contact && (
-          <span className="form-field-error-span">{formik.errors.contact}</span>
-        )} */}
-
-        <input
-          type="text"
-          name="bio"
-          placeholder="About Me"
-          value={formik.values.bio}
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-        />
-
-        {formik.touched.bio && formik.errors.bio && (
-          <span className="form-field-error-span">{formik.errors.bio}</span>
-        )}
-
-        <button type="submit" disabled={formik.isSubmitting}>
+          <span className="invalid-feedback">{formik.errors.bio}</span>
+          <span className="valid-feedback">Looks Good</span>
+        </div>
+        <button
+          type="submit"
+          className="mt-5 btn btn-primary border border-2  shadow-lg"
+          disabled={formik.isSubmitting}
+        >
           Submit
         </button>
       </form>
-
-      <p>
-        Already have an account? <a href="/login">Login here</a>
+      <p className="d-flex gap-1">
+        Already have an account?{" "}
+        <a className="btn btn-outline-secondary py-0 px-2" href="/login">
+          Login
+        </a>
       </p>
     </div>
   );

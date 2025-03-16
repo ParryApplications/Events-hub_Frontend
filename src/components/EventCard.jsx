@@ -1,13 +1,19 @@
-import { useEffect, useState } from "react";
-import { deleteEventByEventId, getUserDetailsByUserId } from "../apis/restApis";
-import eventCardImage from "../assets/Event_card_icon.png";
-import editEventIcon from "../assets/edit-event-icon.svg";
-import bellOffIcon from "../assets/bell-off.svg";
-import bellOnIcon from "../assets/bell-on.svg";
-import { isPastEvent, onRsvpButtonClick } from "../utility/CommonUtility";
+import { useState } from "react";
+import { deleteEventByEventId } from "../apis/restApis";
+import eventCardImage from "../assets/default-event-card-placeholder-img.png";
+import editEventIcon from "../assets/edit-icon.svg";
+import bellOffIcon from "../assets/rsvp-bell-icon-off.svg";
+import bellOnIcon from "../assets/rsvp-bell-icon-on.svg";
+import {
+  convertDateIntoReadableFormat,
+  isPastEvent,
+  onRsvpButtonClick,
+} from "../utility/CommonUtility";
 import { useAuth } from "./AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ContextMenu from "./ContextMenu";
+import { useLongPress } from "use-long-press";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 export default function EventCard({
   event,
@@ -16,12 +22,25 @@ export default function EventCard({
   customRef,
 }) {
   const { userDetails, isAuthenticated } = useAuth();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  let isEditIconClicked = false;
+
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
     y: 0,
   });
   const navigate = useNavigate();
+
+  const onLongPressCallback = (e) => {
+    console.log("onLongPressCallback");
+    console.log(e);
+    handleContextMenu(e);
+  };
+
+  const longPressHandler = useLongPress(onLongPressCallback, {
+    captureEvent: true, // Ensures event data is captured
+  });
 
   /**
    * Method handled onContextMenu event (Right Click event)
@@ -44,12 +63,16 @@ export default function EventCard({
    * Based on the EventId, particular event will delete and contextMenu will closed
    */
   const handleContextMenuDelete = () => {
+    isEditIconClicked = false;
+    setIsDialogOpen((prev) => !prev);
     // console.log(
     //   "Delete button from ContextMenu clicked for eventId: " + event.eventId
     // );
-    deleteEventByEventId(event.eventId);
-    setContextMenu({ visible: false, x: 0, y: 0 });
-    deleteEventFromList(event.eventId);
+  };
+
+  const EditEventHandler = () => {
+    isEditIconClicked = true;
+    setIsDialogOpen((prev) => !prev);
   };
 
   /**
@@ -60,32 +83,72 @@ export default function EventCard({
     setContextMenu({ visible: false, x: 0, y: 0 });
   };
 
+  function buildMapUrl() {
+    const BASE_MAP_QUERY_URL =
+      "https://www.google.com/maps/search/?api=1&query=";
+
+    try {
+      const venueExpression = event.venue
+        .split(",")
+        .map((word) => word.trim().replace(/\s+/g, "+"))
+        .join(",");
+
+      console.log(BASE_MAP_QUERY_URL + venueExpression);
+      return BASE_MAP_QUERY_URL + venueExpression;
+    } catch (e) {
+      console.error("Error building map URL for event: ", event.eventId, e);
+      return "https://www.google.com/maps";
+    }
+  }
+
+  const finalVenueUrl = buildMapUrl();
+
   return (
-    <>
+    <div className="d-flex justify-content-center">
+      {isDialogOpen && (
+        <ConfirmationDialog
+          isOpen={isDialogOpen}
+          onConfirm={() => {
+            if (isEditIconClicked) {
+              navigate("/editEvent", { state: { event } });
+            } else {
+              deleteEventByEventId(event.eventId);
+              setContextMenu({ visible: false, x: 0, y: 0 });
+              deleteEventFromList(event.eventId);
+            }
+          }}
+          onClose={() => {
+            setIsDialogOpen((prev) => !prev);
+          }}
+        />
+      )}
+
       <div
+        {...longPressHandler()}
         ref={customRef}
-        className="event-card-div"
+        className="card rounded-4 mx-2 mb-4 shadow-sm custom-event-card-style"
         onContextMenu={(e) =>
-          userDetails.userId === event.postedByUserId && handleContextMenu(e)
+          isAuthenticated &&
+          userDetails.userId === event.postedByUserId &&
+          handleContextMenu(e)
         }
       >
-        {isAuthenticated && userDetails.userId === event.postedByUserId && (
+        <div className="card-body d-flex flex-column">
+          {isAuthenticated && userDetails.userId === event.postedByUserId && (
+            <img
+              className="event-card-edit-btn align-self-end custom-responsive-normal-icon"
+              src={editEventIcon}
+              alt="edit-event"
+              onClick={EditEventHandler}
+            />
+          )}
+
+          <h3 className="card-title fw-bold text-capitalize text-center">
+            {event.eventName}
+          </h3>
+
           <img
-            src={editEventIcon}
-            alt="edit-event"
-            className="event-rsvp-button common-button-to-text"
-            onClick={() => {
-              navigate("/editEvent", { state: { event } });
-            }}
-          />
-        )}
-        <h3 className="event-title-h">{event.eventName}</h3>
-        <p className="event-posted-details-p">
-          Posted On {event.postedOn}, By {event.postedByFullName}
-        </p>
-        <div className="event-image-div">
-          <img
-            className="event-image-img"
+            className="card-img-top image-fluid rounded align-self-center custom-event-img-style"
             src={event.imageUrl || eventCardImage}
             alt="Event Image"
             onError={(e) => {
@@ -94,37 +157,48 @@ export default function EventCard({
               console.log(`No image posted for eventId: ${event.eventId}`);
             }}
           />
-        </div>
-        <h3 className="event-venue-details-h">
-          (Venue: {event.venue} On {event.eventDate})
-        </h3>
-        <p className="event-description-p">{event.description}</p>
-        {!isPastEvent(event.eventDate) && (
-          <button
-            className="event-rsvp-button common-button-to-text"
-            onClick={() => {
-              if (!isAuthenticated) {
-                alert("Please log in to subscribe this event");
-                navigate("/signup");
-                return;
-              }
 
-              onRsvpButtonClick(
-                userDetails.userId,
-                event.eventId,
-                event.eventDate
-              );
+          <h5 className="text-center card-text my-2 custom-responsive-normal-text">
+            <a href={finalVenueUrl} target="_blank">
+              Venue: {event.venue}
+            </a>
+            <br />
+            (On {convertDateIntoReadableFormat(event.eventDate)})
+          </h5>
 
-              event.status = !event.status;
-              updateEvent(event);
-            }}
-          >
+          <p className="card-text custom-responsive-normal-text text-center">
+            {event.description}
+          </p>
+
+          {/* <p className="text-end custom-responsive-normal-text card-text">
+            Posted On {convertDateIntoReadableFormat(event.postedOn)}, By{" "}
+            {event.postedByFullName}
+          </p> */}
+
+          {!isPastEvent(event.eventDate) && (
             <img
               src={event?.status ? bellOffIcon : bellOnIcon}
               alt={event?.status ? "Bell Off" : "Bell On"}
+              className="event-card-rsvp-btn align-self-end custom-responsive-normal-icon"
+              onClick={() => {
+                if (!isAuthenticated) {
+                  alert("Please log in to subscribe this event");
+                  navigate("/login");
+                  return;
+                }
+
+                onRsvpButtonClick(
+                  userDetails.userId,
+                  event.eventId,
+                  event.eventDate
+                );
+
+                event.status = !event.status;
+                updateEvent(event);
+              }}
             />
-          </button>
-        )}
+          )}
+        </div>
       </div>
 
       {contextMenu.visible && (
@@ -135,6 +209,6 @@ export default function EventCard({
           onDelete={handleContextMenuDelete}
         />
       )}
-    </>
+    </div>
   );
 }

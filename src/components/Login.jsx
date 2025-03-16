@@ -9,8 +9,8 @@ export default function Login() {
   const { setUserDetails, setIsAuthenticated } = useAuth();
 
   const validationFormSchema = Yup.object({
-    username: Yup.string().required("Username is required"),
-    password: Yup.string().required("Password is required"),
+    username: Yup.string().required("Username is Required"),
+    password: Yup.string().required("Password is Required"),
   });
 
   async function submitHandler(values) {
@@ -39,42 +39,75 @@ export default function Login() {
   });
 
   return (
-    <div className="user-form-div">
-      <h2>Welcome Back, Login</h2>
-      <form noValidate className="user-form" onSubmit={formik.handleSubmit}>
-        <input
-          type="text"
-          placeholder="Username"
-          name="username"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.username}
-        />
+    <div className="container card align-items-center justify-content-center bg-app-theme border border-3">
+      {/* <h2>Welcome Back, Login</h2> */}
+      <form
+        noValidate
+        className="row col-12 col-lg-5 gy-2 p-5"
+        onSubmit={formik.handleSubmit}
+      >
+        <div>
+          <label htmlFor="usernameFieldId" className="form-label">
+            Username*
+          </label>
+          <div className="input-group">
+            <span className="input-group-text shadow-sm">@</span>
+            <input
+              id="usernameFieldId"
+              type="text"
+              autoComplete="username"
+              className={`form-control ${
+                formik.touched.username && formik.errors.username
+                  ? "is-invalid"
+                  : ""
+              } shadow-sm`}
+              name="username"
+              value={formik.values.username}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+            />
+            <span className="invalid-feedback">{formik.errors.username}</span>
+          </div>
+        </div>
 
-        {formik.touched.username && formik.errors.username && (
-          <span className="form-field-error-span">
-            {formik.errors.username}
-          </span>
-        )}
+        <div>
+          <label htmlFor="passwordFieldId" className="form-label">
+            Password*
+          </label>
+          <input
+            id="passwordFieldId"
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            className={`form-control ${
+              formik.touched.password && formik.errors.password
+                ? "is-invalid"
+                : ""
+            } shadow-sm`}
+            value={formik.values.password}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          name="password"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.password}
-        />
+          <span className="invalid-feedback">{formik.errors.password}</span>
+          <span className="valid-feedback">Looks Good</span>
+        </div>
 
-        {formik.touched.password && formik.errors.password && (
-          <span className="form-field-error-span">
-            {formik.errors.password}
-          </span>
-        )}
-        <button type="submit" disabled={formik.isSubmitting}>
+        <button
+          className="mt-4 btn btn-primary border border-2 shadow-lg"
+          type="submit"
+          disabled={formik.isSubmitting}
+        >
           Login
         </button>
       </form>
+
+      <p className="d-flex gap-1">
+        New Here?{" "}
+        <a className="btn btn-outline-secondary py-0 px-2" href="/signup">
+          Sign Up
+        </a>
+      </p>
     </div>
   );
 }
