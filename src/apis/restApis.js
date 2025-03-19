@@ -11,6 +11,7 @@ const PUT_RSVP_BY_EVENTID_USERID = "/rsvp/api";
 const REMOVE_PAST_RSVPS_BY_USERID = "/rsvp/api/removePastEvents/{userId}";
 const GET_MY_POSTED_EVENTS_BY_USERID = "/event/api/user/{userId}";
 const GET_USER_DETAILS_BY_USERID = "/user/api/{userId}";
+const ADMIN_BASE_URL = "/admin/api/";
 
 /**
  * Fetch all events from the server (without RSVP details)
@@ -215,4 +216,27 @@ export async function deleteEventByEventId(eventId) {
     console.error(`Error while deleting event by eventId: ${err.message}`);
     return false;
   }
+}
+
+export async function updateVerificationOfAnEvent_ADMIN(userId, eventId) {
+  try {
+    console.log(userId, eventId);
+
+    if (!userId || !eventId) {
+      throw new Error("userId or eventId is missing");
+    }
+
+    console.log(userId, eventId);
+
+    const response = await eventsHubApiClient.patch(
+      `${ADMIN_BASE_URL}eventVerification/user/${userId}/event/${eventId}`
+    );
+    if (response?.data) {
+      console.log("Event verification updated successfully");
+      return response.data;
+    }
+  } catch (err) {
+    console.error(`Error while updating event verification: ${err.message}`);
+  }
+  return undefined;
 }

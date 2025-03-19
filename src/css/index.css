@@ -66,3 +66,7 @@ form label {
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
 }
+
+.small-icon {
+  width: 30px;
+}

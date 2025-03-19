@@ -1,8 +1,12 @@
 import React from "react";
 import alertIcon from "../assets/alert-icon.svg";
 
-const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
+const ConfirmationDialog = ({ isOpen, onClose, onConfirm, message }) => {
   if (!isOpen) return null;
+
+  if (!message) {
+    message = "Are you sure?";
+  }
 
   return (
     <div className="modal-overlay">
@@ -13,7 +17,7 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
           alt="alert-dialog-icon"
         />
 
-        <p className="py-2">Are you sure?</p>
+        <p className="py-2">{message}</p>
 
         <div className="d-flex justify-content-center gap-3">
           <button className="btn btn-danger" onClick={onClose}>

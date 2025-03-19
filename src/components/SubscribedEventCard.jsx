@@ -1,6 +1,7 @@
 import eventPCardImage from "../assets/app-logo-icon.png";
 import bellOffIcon from "../assets/rsvp-bell-icon-off.svg";
 import bellOnIcon from "../assets/rsvp-bell-icon-on.svg";
+import verifiedIcon from "../assets/verified-icon.svg";
 import {
   convertDateIntoReadableFormat,
   onRsvpButtonClick,
@@ -30,9 +31,19 @@ export default function SubscribedEventCard({ event, updateEvent }) {
         }}
       />
       <div className="d-flex flex-column flex-fill justify-content-center">
-        <p className="custom-responsive-normal-text text-capitalize fw-bold fs-lg-5 mb-2 text-center">
-          {event.eventName}
-        </p>
+        <div className="d-flex align-items-center">
+          <p className="d-inline custom-responsive-normal-text text-capitalize fw-bold fs-lg-5 mb-2">
+            {event.eventName}
+          </p>
+          {event.verified === true && (
+            <img
+              src={verifiedIcon}
+              className="event-card-edit-btn ms-1 custom-responsive-normal-icon mb-2"
+              style={{ height: "1.5em", verticalAlign: "top" }}
+              alt="Verified"
+            />
+          )}
+        </div>
         <p className="card-text custom-responsive-normal-text mb-2">
           Date of Event: {convertDateIntoReadableFormat(event.eventDate)}
         </p>

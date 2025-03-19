@@ -1,16 +1,20 @@
 import { useState } from "react";
-import { deleteEventByEventId } from "../apis/restApis";
+import {
+  deleteEventByEventId,
+  updateVerificationOfAnEvent_ADMIN,
+} from "../apis/restApis";
 import eventCardImage from "../assets/default-event-card-placeholder-img.png";
 import editEventIcon from "../assets/edit-icon.svg";
 import bellOffIcon from "../assets/rsvp-bell-icon-off.svg";
 import bellOnIcon from "../assets/rsvp-bell-icon-on.svg";
+import verifiedIcon from "../assets/verified-icon.svg";
 import {
   convertDateIntoReadableFormat,
   isPastEvent,
   onRsvpButtonClick,
 } from "../utility/CommonUtility";
 import { useAuth } from "./AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ContextMenu from "./ContextMenu";
 import { useLongPress } from "use-long-press";
 import ConfirmationDialog from "./ConfirmationDialog";
@@ -93,7 +97,7 @@ export default function EventCard({
         .map((word) => word.trim().replace(/\s+/g, "+"))
         .join(",");
 
-      console.log(BASE_MAP_QUERY_URL + venueExpression);
+      // console.log(BASE_MAP_QUERY_URL + venueExpression);
       return BASE_MAP_QUERY_URL + venueExpression;
     } catch (e) {
       console.error("Error building map URL for event: ", event.eventId, e);
@@ -103,8 +107,27 @@ export default function EventCard({
 
   const finalVenueUrl = buildMapUrl();
 
+  const onDoubleClickEventCardHandler = async () => {
+    if (isAuthenticated && userDetails.role === "ADMIN") {
+      alert("Going to toggle the verification of this event");
+      const updatedEvent = await updateVerificationOfAnEvent_ADMIN(
+        userDetails.userId,
+        event.eventId
+      );
+      console.log(updatedEvent);
+
+      updateEvent(updatedEvent);
+    }
+  };
+
   return (
-    <div className="d-flex justify-content-center">
+    <div
+      className="d-flex justify-content-center"
+      onDoubleClick={() => {
+        console.log("Double-click detected!");
+        onDoubleClickEventCardHandler();
+      }}
+    >
       {isDialogOpen && (
         <ConfirmationDialog
           isOpen={isDialogOpen}
@@ -143,12 +166,22 @@ export default function EventCard({
             />
           )}
 
-          <h3 className="card-title fw-bold text-capitalize text-center">
-            {event.eventName}
-          </h3>
+          <div className="text-center">
+            <h3 className="card-title fw-bold text-capitalize d-inline m-0 mb-2">
+              {event.eventName}
+            </h3>
+            {event.verified === true && (
+              <img
+                src={verifiedIcon}
+                className="event-card-edit-btn ms-1 custom-responsive-normal-icon mb-2"
+                style={{ height: "2em", verticalAlign: "top" }}
+                alt="Verified"
+              />
+            )}
+          </div>
 
           <img
-            className="card-img-top image-fluid rounded align-self-center custom-event-img-style"
+            className="mt-2 card-img-top image-fluid rounded align-self-center custom-event-img-style"
             src={event.imageUrl || eventCardImage}
             alt="Event Image"
             onError={(e) => {

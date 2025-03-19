@@ -15,7 +15,7 @@ export default function Login() {
 
   async function submitHandler(values) {
     // Submit form data to the server
-    console.log("Form is submitting with Values: ", values);
+    // console.log("Form is submitting with Values: ", values);
     const response = await login(values);
     if (response && Object.keys(response).length > 0) {
       setUserDetails(response);

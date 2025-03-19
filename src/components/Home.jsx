@@ -42,6 +42,7 @@ export default function Home() {
     if (allEvents && Object.keys(allEvents).length > 0) {
       const sortedEvents = getSortedEventsByEventDate(allEvents);
       setEventList(sortedEvents);
+      console.log(eventList);
     } else {
       console.log("No events found.");
     }
@@ -58,6 +59,7 @@ export default function Home() {
     if (allRsvpEvents && Object.keys(allRsvpEvents).length > 0) {
       const sortedRsvpEvents = getSortedEventsByEventDate(allRsvpEvents);
       setEventList(sortedRsvpEvents);
+      console.log(eventList);
     } else {
       console.log("No events found.");
     }
@@ -151,7 +153,7 @@ export default function Home() {
   function onSubscribedHeadingClickHandler() {
     if (!isAuthenticated) {
       alert("Please first log in to Subscribe events.");
-      navigate("/signup");
+      navigate("/login");
       return;
     }
   }
@@ -209,7 +211,7 @@ export default function Home() {
               className="overflow-auto d-flex flex-column"
               style={{
                 maxHeight:
-                  isAuthenticated && hasSubscribedEvent ? "50vh" : "0vh",
+                  isAuthenticated && hasSubscribedEvent ? "55vh" : "0vh",
               }}
             >
               {isAuthenticated &&
@@ -238,7 +240,7 @@ export default function Home() {
             </h3>
             <div
               className="overflow-auto d-flex flex-column"
-              style={{ maxHeight: hasPastEvent ? "50vh" : "0vh" }}
+              style={{ maxHeight: hasPastEvent ? "55vh" : "0vh" }}
             >
               {eventList
                 .filter((e) => isPastEvent(e.eventDate))
