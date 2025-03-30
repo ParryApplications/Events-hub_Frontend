@@ -1,22 +1,35 @@
+import { RiShareForwardLine } from "react-icons/ri";
 import eventPCardImage from "../assets/app-logo-icon.png";
-import bellOffIcon from "../assets/rsvp-bell-icon-off.svg";
-import bellOnIcon from "../assets/rsvp-bell-icon-on.svg";
-import verifiedIcon from "../assets/verified-icon.svg";
+
 import {
   convertDateIntoReadableFormat,
-  onRsvpButtonClick,
+  handleShare,
+  isPastEvent,
 } from "../utility/CommonUtility";
-import { useAuth } from "./AuthContext";
-import { useScrollContext } from "./ScrollContext";
 
-export default function SubscribedEventCard({ event, updateEvent }) {
-  const { userDetails, isAuthenticated } = useAuth();
+import { useScrollContext } from "./ScrollContext";
+import { BiBellOff } from "react-icons/bi";
+import { useEffect, useRef } from "react";
+
+export default function SubscribedEventCard({ event, rsvpBellHandler }) {
   const { scrollToEvent } = useScrollContext();
+  const subsEventDivRef = useRef(null);
+
+  useEffect(() => {
+    if (subsEventDivRef?.current) {
+      if (event.verified === true)
+        subsEventDivRef.current?.classList.add("verified-subs-event");
+      else subsEventDivRef.current?.classList.remove("verified-subs-event");
+    }
+  }, [event.verified]);
 
   return (
     <div
+      ref={subsEventDivRef}
       className="subs-event-card-div cursor-pointer bg-custom-light"
-      onClick={() => scrollToEvent(event.eventId)}
+      onClick={(e) => {
+        scrollToEvent(event.eventId);
+      }}
     >
       <img
         className="subs-event-card-img"
@@ -35,34 +48,36 @@ export default function SubscribedEventCard({ event, updateEvent }) {
           <p className="d-inline custom-responsive-normal-text text-capitalize fw-bold fs-lg-5 mb-2">
             {event.eventName}
           </p>
-          {event.verified === true && (
+          {/* {event.verified === true && (
             <img
               src={verifiedIcon}
               className="event-card-edit-btn ms-1 custom-responsive-normal-icon mb-2"
               style={{ height: "1.5em", verticalAlign: "top" }}
               alt="Verified"
             />
-          )}
+          )} */}
         </div>
         <p className="card-text custom-responsive-normal-text mb-2">
-          Date of Event: {convertDateIntoReadableFormat(event.eventDate)}
+          DOE: {convertDateIntoReadableFormat(event.eventDate)}
         </p>
-        {isAuthenticated && (
-          <img
-            className="subs-event-card-rsvp-btn align-self-end custom-responsive-normal-icon"
-            src={event?.status ? bellOffIcon : bellOnIcon}
-            alt={event?.status ? "Bell Off" : "Bell On"}
-            onClick={() => {
-              onRsvpButtonClick(
-                userDetails.userId,
-                event.eventId,
-                event.eventDate
-              );
-              event.status = !event.status;
-              updateEvent(event);
+        <div className="align-self-end d-flex align-items-center justify-content-center gap-3">
+          <RiShareForwardLine
+            className="responsive-icons"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleShare(event.eventId);
             }}
           />
-        )}
+          {!isPastEvent(event.eventDate) && (
+            <BiBellOff
+              className="responsive-icons"
+              onClick={async (e) => {
+                e.stopPropagation();
+                await rsvpBellHandler(event);
+              }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

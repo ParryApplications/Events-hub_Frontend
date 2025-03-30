@@ -1,6 +1,6 @@
 @media (max-width: 768px) {
   .custom-responsive-normal-text {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   form span {
@@ -27,8 +27,62 @@
   .custom-responsive-normal-img {
     width: 80px;
   }
+
+  .responsive-icons {
+    font-size: 12px;
+  }
+  .responsive-texts {
+    font-size: 12px;
+  }
 }
 
 /* Screen where grid single view show */
-@media (max-width: 991px) {
+@media (max-width: 490px) {
+  .fixed-height {
+    height: 5rem;
+  }
 }
+
+/* Toast Responsive Adjustments */
+@media (max-width: 768px) {
+  .toast-success,
+  .toast-error {
+    max-width: 90%; /* Adapt for smaller screens */
+    font-size: 0.9rem; /* Adjust text size */
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 480px) {
+  .toast-success,
+  .toast-error {
+    margin-top: 4px;
+    max-width: 99%; /* Further adjust for very small screens */
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 500px) {
+  .text-for-short-space {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 475px) {
+  .text-for-short-space {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 448px) {
+  .text-for-short-space {
+    font-size: 11px;
+  }
+}
+
+/* @media (max-width: 420px) {
+  .text-for-short-space {
+    font-size: 10px;
+  }
+} */

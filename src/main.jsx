@@ -3,7 +3,6 @@ import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./components/Home.jsx";
 import AddEditEventForm from "./components/AddEditEventForm.jsx";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./css/App.css";
@@ -15,6 +14,8 @@ import AuthProvider from "./components/AuthContext.jsx";
 import Profile from "./components/Profile.jsx";
 import ScrollProvider from "./components/ScrollContext.jsx";
 import NotFound from "./components/NotFound.jsx";
+import { ToastContainer } from "react-toastify";
+import SingleEvent from "./components/SingleEvent.jsx";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
         path: "profile",
         element: <Profile />,
       },
+      {
+        path: "event/:eventId",
+        element: <SingleEvent />,
+      },
     ],
   },
   {
@@ -63,8 +68,11 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
-  <AuthProvider>
-    <RouterProvider router={router} />
-  </AuthProvider>
+  <>
+    <ToastContainer />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </>
   // </StrictMode>
 );

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
+import { FaTrash, FaEdit } from "react-icons/fa"; // Import icons
 
-export default function ContextMenu({ x, y, onClose, onDelete }) {
+export default function ContextMenu({ x, y, onClose, onDelete, onEdit }) {
   const contextMenuDivRef = useRef(null);
 
   useEffect(() => {
@@ -29,16 +30,40 @@ export default function ContextMenu({ x, y, onClose, onDelete }) {
           position: "absolute",
           background: "#fff",
           border: "1px solid #ccc",
-          padding: "5px",
+          padding: "8px",
           listStyle: "none",
           boxShadow: "2px 2px 5px rgba(0,0,0,0.2)",
+          borderRadius: "6px",
+          minWidth: "150px",
+          zIndex: 1000, // Ensure it's on top
         }}
       >
         <li
-          style={{ cursor: "pointer", padding: "5px", color: "red" }}
+          style={{
+            cursor: "pointer",
+            padding: "8px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            color: "blue",
+          }}
+          onClick={onEdit}
+        >
+          <FaEdit size={14} /> Edit
+        </li>
+
+        <li
+          style={{
+            cursor: "pointer",
+            padding: "8px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px", // Spacing between icon and text
+            color: "red",
+          }}
           onClick={onDelete}
         >
-          Delete
+          <FaTrash size={14} /> Delete
         </li>
       </ul>
     </div>

@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import EventIcon from "../assets/app-logo-icon.png";
+import { useAuth } from "./AuthContext";
 
 export default function Footer() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <>
       <p className="col-md-4 mb-0 text-muted">© 2023 ParryApplications, Inc.</p>
@@ -19,21 +22,23 @@ export default function Footer() {
             Home
           </Link>
         </li>
-        <li className="nav-item">
-          <Link to="/profile" className="nav-link px-2 text-muted">
-            Profile
-          </Link>
-        </li>
+        {isAuthenticated && (
+          <li className="nav-item">
+            <Link to="/profile" className="nav-link px-2 text-muted">
+              Profile
+            </Link>
+          </li>
+        )}
         <li className="nav-item">
           <Link to="/" className="nav-link px-2 text-muted">
             Events
           </Link>
         </li>
-        <li className="nav-item">
-          <a href="#accordion-hr-start" className="nav-link px-2 text-muted">
+        {/* <li className="nav-item">
+          <a href="#faq-accordion" className="nav-link px-2 text-muted">
             FAQs
           </a>
-        </li>
+        </li> */}
         <li className="nav-item">
           <Link to="/about" className="nav-link px-2 text-muted">
             About

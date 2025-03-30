@@ -47,7 +47,7 @@ export default function Accordion() {
           id="collapseTwo"
           className="accordion-collapse collapse"
           aria-labelledby="headingTwo"
-          data-bs-parent="#accordionExample"
+          data-bs-parent="#faq-accordion"
         >
           <div className="accordion-body">...</div>
         </div>
@@ -70,7 +70,7 @@ export default function Accordion() {
           id="collapseThree"
           className="accordion-collapse collapse"
           aria-labelledby="headingThree"
-          data-bs-parent="#accordionExample"
+          data-bs-parent="#faq-accordion"
         >
           <div className="accordion-body">
             When you subscribe to an event, we’ll send you a reminder one day
@@ -96,7 +96,7 @@ export default function Accordion() {
           id="collapseFour"
           className="accordion-collapse collapse"
           aria-labelledby="headingFour"
-          data-bs-parent="#accordionExample"
+          data-bs-parent="#faq-accordion"
         >
           <div className="accordion-body">
             You can browse events without an account, but to post, subscribe, or
@@ -106,23 +106,23 @@ export default function Accordion() {
       </div>
 
       <div className="accordion-item">
-        <h2 className="accordion-header" id="headingFour">
+        <h2 className="accordion-header" id="headingFive">
           <button
             className="accordion-button collapsed"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#collapseFour"
+            data-bs-target="#collapseFive"
             aria-expanded="false"
-            aria-controls="collapseFour"
+            aria-controls="collapseFive"
           >
             Is the app free to use?
           </button>
         </h2>
         <div
-          id="collapseFour"
+          id="collapseFive"
           className="accordion-collapse collapse"
-          aria-labelledby="headingFour"
-          data-bs-parent="#accordionExample"
+          aria-labelledby="headingFive"
+          data-bs-parent="#faq-accordion"
         >
           <div className="accordion-body">
             Yes! The app is completely free to browse and post events.
@@ -131,23 +131,23 @@ export default function Accordion() {
       </div>
 
       <div className="accordion-item">
-        <h2 className="accordion-header" id="headingFour">
+        <h2 className="accordion-header" id="headingSix">
           <button
             className="accordion-button collapsed"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#collapseFour"
+            data-bs-target="#collapseSix"
             aria-expanded="false"
-            aria-controls="collapseFour"
+            aria-controls="collapseSix"
           >
             What happens if an event is canceled?
           </button>
         </h2>
         <div
-          id="collapseFour"
+          id="collapseSix"
           className="accordion-collapse collapse"
-          aria-labelledby="headingFour"
-          data-bs-parent="#accordionExample"
+          aria-labelledby="headingSix"
+          data-bs-parent="#faq-accordion"
         >
           <div className="accordion-body">
             If an event is canceled, the organizer will update the status, and

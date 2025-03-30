@@ -1,33 +1,38 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   deleteEventByEventId,
   updateVerificationOfAnEvent_ADMIN,
 } from "../apis/restApis";
 import eventCardImage from "../assets/default-event-card-placeholder-img.png";
-import editEventIcon from "../assets/edit-icon.svg";
-import bellOffIcon from "../assets/rsvp-bell-icon-off.svg";
-import bellOnIcon from "../assets/rsvp-bell-icon-on.svg";
-import verifiedIcon from "../assets/verified-icon.svg";
 import {
+  ADMIN_ROLE,
   convertDateIntoReadableFormat,
+  ERROR,
+  handleShare,
   isPastEvent,
-  onRsvpButtonClick,
+  showToast,
+  SUCCESS,
 } from "../utility/CommonUtility";
 import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import ContextMenu from "./ContextMenu";
-import { useLongPress } from "use-long-press";
+
 import ConfirmationDialog from "./ConfirmationDialog";
+
+import { MdLocationOn, MdMoreVert } from "react-icons/md";
+import { BiBell, BiBellOff } from "react-icons/bi";
+import { RiShareForwardLine } from "react-icons/ri";
 
 export default function EventCard({
   event,
-  updateEvent,
   deleteEventFromList,
   customRef,
+  rsvpBellHandler,
+  updateEvent,
 }) {
   const { userDetails, isAuthenticated } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  let isEditIconClicked = false;
+  let isEditIconClicked = useRef(false);
 
   const [contextMenu, setContextMenu] = useState({
     visible: false,
@@ -36,30 +41,10 @@ export default function EventCard({
   });
   const navigate = useNavigate();
 
-  const onLongPressCallback = (e) => {
-    console.log("onLongPressCallback");
-    console.log(e);
-    handleContextMenu(e);
-  };
-
-  const longPressHandler = useLongPress(onLongPressCallback, {
-    captureEvent: true, // Ensures event data is captured
-  });
-
-  /**
-   * Method handled onContextMenu event (Right Click event)
-   * @param {*} e
-   * @param {*} eventId
-   */
-  const handleContextMenu = (e) => {
-    e.preventDefault();
-    // console.log("Right Click detected under event Id: " + eventId);
-    // console.log("x: , y: ", e.pageX, e.pageY);
-    setContextMenu({
-      visible: true,
-      x: e.pageX,
-      y: e.pageY,
-    });
+  const handleContextMenuEdit = () => {
+    isEditIconClicked.current = true;
+    setContextMenu({ visible: false, x: 0, y: 0 });
+    setIsDialogOpen((prev) => !prev);
   };
 
   /**
@@ -67,16 +52,12 @@ export default function EventCard({
    * Based on the EventId, particular event will delete and contextMenu will closed
    */
   const handleContextMenuDelete = () => {
-    isEditIconClicked = false;
+    isEditIconClicked.current = false;
+    setContextMenu({ visible: false, x: 0, y: 0 });
     setIsDialogOpen((prev) => !prev);
     // console.log(
     //   "Delete button from ContextMenu clicked for eventId: " + event.eventId
     // );
-  };
-
-  const EditEventHandler = () => {
-    isEditIconClicked = true;
-    setIsDialogOpen((prev) => !prev);
   };
 
   /**
@@ -120,64 +101,81 @@ export default function EventCard({
     }
   };
 
+  const onEventMenuClick = (e) => {
+    // console.log("Event Menu Click detected for eventId: " + event.eventId);
+    setContextMenu({
+      visible: true,
+      x: e.pageX - 150,
+      y: e.pageY,
+    });
+  };
+
   return (
     <div
       className="d-flex justify-content-center"
-      onDoubleClick={() => {
-        console.log("Double-click detected!");
-        onDoubleClickEventCardHandler();
-      }}
+      onDoubleClick={onDoubleClickEventCardHandler}
     >
       {isDialogOpen && (
         <ConfirmationDialog
           isOpen={isDialogOpen}
           onConfirm={() => {
-            if (isEditIconClicked) {
+            if (isEditIconClicked.current) {
               navigate("/editEvent", { state: { event } });
             } else {
-              deleteEventByEventId(event.eventId);
-              setContextMenu({ visible: false, x: 0, y: 0 });
-              deleteEventFromList(event.eventId);
+              //Delete From Backend
+              if (deleteEventByEventId(event.eventId)) {
+                showToast(
+                  `${event.eventName} event deleted successfully`,
+                  SUCCESS
+                );
+              } else {
+                showToast(
+                  `Something went wrong while deleting ${event.eventName} event`,
+                  ERROR
+                );
+              }
+              deleteEventFromList(event.eventId); //UI List Update
             }
           }}
           onClose={() => {
             setIsDialogOpen((prev) => !prev);
           }}
+          message={
+            !isEditIconClicked.current
+              ? `Confirm deletion? This will permanently remove ${event.eventName} event.`
+              : "Proceed with editing? Ensure all details are correct before saving."
+          }
         />
       )}
 
       <div
-        {...longPressHandler()}
         ref={customRef}
-        className="card rounded-4 mx-2 mb-4 shadow-sm custom-event-card-style"
-        onContextMenu={(e) =>
-          isAuthenticated &&
-          userDetails.userId === event.postedByUserId &&
-          handleContextMenu(e)
-        }
+        className="card rounded-4 mx-2 mb-4 shadow-sm custom-event-card-style card-striped"
       >
         <div className="card-body d-flex flex-column">
-          {isAuthenticated && userDetails.userId === event.postedByUserId && (
-            <img
-              className="event-card-edit-btn align-self-end custom-responsive-normal-icon"
-              src={editEventIcon}
-              alt="edit-event"
-              onClick={EditEventHandler}
-            />
-          )}
+          {isAuthenticated &&
+            ((userDetails.userId === event.postedByUserId &&
+              !isPastEvent(event.eventDate)) ||
+              userDetails.role === ADMIN_ROLE) && (
+              <MdMoreVert
+                size={24}
+                className="align-self-end"
+                onClick={onEventMenuClick}
+              />
+            )}
 
           <div className="text-center">
             <h3 className="card-title fw-bold text-capitalize d-inline m-0 mb-2">
               {event.eventName}
             </h3>
-            {event.verified === true && (
+            {/* {event.verified === true && (
               <img
                 src={verifiedIcon}
                 className="event-card-edit-btn ms-1 custom-responsive-normal-icon mb-2"
                 style={{ height: "2em", verticalAlign: "top" }}
                 alt="Verified"
               />
-            )}
+            )} */}
           </div>
 
           <img
@@ -192,6 +190,7 @@ export default function EventCard({
           />
 
           <h5 className="text-center card-text my-2 custom-responsive-normal-text">
+            <MdLocationOn />
             <a href={finalVenueUrl} target="_blank">
               Venue: {event.venue}
             </a>
@@ -207,41 +206,55 @@ export default function EventCard({
             Posted On {convertDateIntoReadableFormat(event.postedOn)}, By{" "}
             {event.postedByFullName}
           </p> */}
-
-          {!isPastEvent(event.eventDate) && (
-            <img
-              src={event?.status ? bellOffIcon : bellOnIcon}
-              alt={event?.status ? "Bell Off" : "Bell On"}
-              className="event-card-rsvp-btn align-self-end custom-responsive-normal-icon"
-              onClick={() => {
-                if (!isAuthenticated) {
-                  alert("Please log in to subscribe this event");
-                  navigate("/login");
-                  return;
-                }
-
-                onRsvpButtonClick(
-                  userDetails.userId,
-                  event.eventId,
-                  event.eventDate
-                );
-
-                event.status = !event.status;
-                updateEvent(event);
-              }}
+          <div className="align-self-end d-flex align-items-center justify-content-center gap-3">
+            <RiShareForwardLine
+              size={24}
+              className="cursor-pointer"
+              onClick={() => handleShare(event.eventId)}
             />
-          )}
+            {event?.status
+              ? !isPastEvent(event.eventDate) && (
+                  <BiBellOff
+                    className="cursor-pointer"
+                    size={24}
+                    onClick={async () => await rsvpBellHandler(event)}
+                  />
+                )
+              : !isPastEvent(event.eventDate) && (
+                  <BiBell
+                    size={24}
+                    className="cursor-pointer"
+                    onClick={async () => await rsvpBellHandler(event)}
+                  />
+                )}
+            {/* <FaBell size={24} />
+            <FaBellSlash size={24} />
+            <MdNotifications size={24} />
+            <MdNotificationsOff size={24} /> */}
+            {/* { {!isPastEvent(event.eventDate) && (
+              <img
+                src={event?.status ? bellOffIcon : bellOnIcon}
+                alt={event?.status ? "Bell Off" : "Bell On"}
+                className="event-card-rsvp-btn custom-responsive-normal-icon"
+                onClick={}
+              />
+            )} } */}
+          </div>
         </div>
       </div>
 
-      {contextMenu.visible && (
-        <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          onClose={handleContextMenuClose}
-          onDelete={handleContextMenuDelete}
-        />
-      )}
+      {isAuthenticated &&
+        (userDetails.userId === event.postedByUserId ||
+          userDetails.role === ADMIN_ROLE) &&
+        contextMenu?.visible && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            onEdit={handleContextMenuEdit}
+            onClose={handleContextMenuClose}
+            onDelete={handleContextMenuDelete}
+          />
+        )}
     </div>
   );
 }

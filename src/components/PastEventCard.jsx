@@ -1,15 +1,35 @@
+import { useNavigate } from "react-router-dom";
 import eventPCardImage from "../assets/app-logo-icon.png";
-import { convertDateIntoReadableFormat } from "../utility/CommonUtility";
-import { useScrollContext } from "./ScrollContext";
-import verifiedIcon from "../assets/verified-icon.svg";
+import {
+  convertDateIntoReadableFormat,
+  handleShare,
+} from "../utility/CommonUtility";
+
+import { useEffect, useRef } from "react";
+import { RiShareForwardLine } from "react-icons/ri";
 
 export default function PastEventCard({ event }) {
-  const { scrollToEvent } = useScrollContext();
+  // const { scrollToEvent } = useScrollContext();
+  const pastEventDivRef = useRef(null);
+  const navigate = useNavigate();
+
+  function onClickHandler() {
+    navigate(`/event/${event.eventId}`);
+  }
+
+  useEffect(() => {
+    if (pastEventDivRef?.current) {
+      if (event.verified === true)
+        pastEventDivRef.current?.classList.add("verified-subs-event");
+      else pastEventDivRef.current?.classList.remove("verified-subs-event");
+    }
+  }, [event.verified]);
 
   return (
     <div
+      ref={pastEventDivRef}
       className="subs-event-card-div cursor-pointer bg-custom-strong"
-      onClick={() => scrollToEvent(event.eventId)}
+      onClick={onClickHandler}
     >
       <img
         className="subs-event-card-img"
@@ -28,18 +48,19 @@ export default function PastEventCard({ event }) {
           <p className="d-inline custom-responsive-normal-text text-capitalize fw-bold fs-lg-5 m-0 mb-2">
             {event.eventName}
           </p>
-          {event.verified === true && (
-            <img
-              src={verifiedIcon}
-              className="event-card-edit-btn ms-1 custom-responsive-normal-icon mb-2"
-              style={{ height: "1.5em", verticalAlign: "top" }}
-              alt="Verified"
-            />
-          )}
         </div>
         <p className="card-text custom-responsive-normal-text mb-2">
-          Date of Event: {convertDateIntoReadableFormat(event.eventDate)}
+          DOE: {convertDateIntoReadableFormat(event.eventDate)}
         </p>
+        <div className="align-self-end d-flex align-items-center justify-content-center gap-3">
+          <RiShareForwardLine
+            className="responsive-icons"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleShare(event.eventId);
+            }}
+          />
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   text-decoration: none;
-  /* font-family: system-ui, sans-serif, cursive; */
+  font-family: "Montserrat";
   /* font-family: cursive; */
 }
 
@@ -69,4 +69,102 @@ form label {
 
 .small-icon {
   width: 30px;
+}
+
+/* For Toast Styling */
+.toast-success {
+  background-color: #edf8ef !important; /* Light red tint */
+  border-left: 5px solid #2fd34a; /* Red left border */
+  transform: translateX(100%);
+  animation: slideIn 0.5s forwards;
+  font-weight: 700;
+}
+
+.toast-error {
+  background-color: #f8eded !important; /* Light red tint */
+  border-left: 5px solid #d32f2f; /* Red left border */
+  transform: translateX(100%);
+  animation: slideIn 0.5s forwards;
+  font-weight: 700;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+
+/* .badge-strike {
+  text-decoration: line-through;
+  text-decoration-color: black;
+} */
+
+.verified-event {
+  position: relative;
+  overflow: hidden;
+}
+
+.verified-event::before {
+  content: "✔";
+  padding-left: 3px;
+
+  color: #ffff;
+  position: absolute;
+  width: 35px; /* Adjust the size */
+  height: 35px; /* Adjust the size */
+  background: #1e90ff; /* Change strip color */
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.verified-subs-event {
+  position: relative;
+}
+
+.verified-subs-event::before {
+  content: "✔";
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-left: 1px;
+
+  color: #ffff;
+  width: 30px; /* Adjust the size */
+  height: 30px; /* Adjust the size */
+  background: #1e90ff; /* Change strip color */
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+/* Filter CSS */
+.dropdown-menu {
+  max-width: 220px; /* Limit width */
+  white-space: normal; /* Allow wrapping */
+  word-wrap: break-word; /* Break words when needed */
+  overflow-wrap: break-word; /* Ensure long words break */
+  display: block; /* Ensure it behaves as a block for text wrapping */
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center; /* Keep icon and text aligned */
+  gap: 8px; /* Add spacing between icon and text */
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.dropdown-item svg {
+  flex-shrink: 0; /* Prevent icon from shrinking */
+  width: 16px; /* Set a fixed width */
+  height: 16px; /* Set a fixed height */
+}
+
+.responsive-icons {
+  font-size: 20px;
+}
+
+.responsive-texts {
+  font-size: 12px;
 }

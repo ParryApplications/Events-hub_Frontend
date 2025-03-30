@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { login } from "../apis/restApis";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
+import { getGreeting, showToast, SUCCESS } from "../utility/CommonUtility";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -18,9 +19,14 @@ export default function Login() {
     // console.log("Form is submitting with Values: ", values);
     const response = await login(values);
     if (response && Object.keys(response).length > 0) {
+      console.log(response);
       setUserDetails(response);
       setIsAuthenticated(true);
       navigate("/");
+      showToast(
+        `Hi ${response.fullName.split(" ")[0]}, ${getGreeting()}`,
+        SUCCESS
+      );
     } else {
       alert("Invalid username or password");
     }

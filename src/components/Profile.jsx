@@ -1,23 +1,51 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
 import EventCard from "./EventCard";
-import { getMyPostedEventsByUserId } from "../apis/restApis";
+import { getMyPostedEventsByUserId, logout } from "../apis/restApis";
 import profileImg from "../assets/neutral-profile-img.png";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import ConfirmationDialog from "./ConfirmationDialog";
+import {
+  ERROR,
+  getSortedEventsByAlphabets,
+  getSortedEventsByEventDateNewToOld,
+  getSortedEventsByEventDateOldToNew,
+  onRsvpButtonClick,
+  showToast,
+  SUCCESS,
+} from "../utility/CommonUtility";
+import { MdFilterList } from "react-icons/md";
+import SortByContextMenu from "./SortByContextMenu";
 
 export default function Profile() {
-  const { userDetails, isAuthenticated } = useAuth();
+  const [sortByContextMenu, setSortByContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+  });
+  const { userDetails, isAuthenticated, setUserDetails, setIsAuthenticated } =
+    useAuth();
   const [myEvents, setMyEvents] = useState([]);
   const [isProfileTabActive, setProfileTabActive] = useState(true);
   const navigate = useNavigate();
-  //   console.log(userDetails);
+  const [isDialogOpen, setIsDialogOpen] = useState();
 
   const profileButtonRef = useRef(null);
   const myEventsButtonRef = useRef(null);
 
+  const isNoteDone = useRef(false);
+
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/");
+    }
+
+    if (isNoteDone && isNoteDone?.current === false) {
+      showToast(
+        "Currently users are not allowed to modify their profile.",
+        ERROR
+      );
+      isNoteDone.current = true;
     }
 
     const loadMyEvents = async () => {
@@ -74,18 +102,60 @@ export default function Profile() {
 
       <div className="my-2">
         {isProfileTabActive ? (
-          <ProfileContent userDetails={userDetails} />
+          <ProfileContent
+            userDetails={userDetails}
+            setUserDetails={setUserDetails}
+            setIsAuthenticated={setIsAuthenticated}
+            navigate={navigate}
+            isDialogOpen={isDialogOpen}
+            setIsDialogOpen={setIsDialogOpen}
+          />
         ) : (
-          <PostedEventsContent myEvents={myEvents} setMyEvents={setMyEvents} />
+          <PostedEventsContent
+            myEvents={myEvents}
+            setMyEvents={setMyEvents}
+            isAuthenticated={isAuthenticated}
+            userDetails={userDetails}
+            sortByContextMenu={sortByContextMenu}
+            setSortByContextMenu={setSortByContextMenu}
+          />
         )}
       </div>
     </>
   );
 }
 
-const ProfileContent = ({ userDetails }) => {
+const ProfileContent = ({
+  userDetails,
+  setUserDetails,
+  setIsAuthenticated,
+  navigate,
+  isDialogOpen,
+  setIsDialogOpen,
+}) => {
   return (
     <div className="rounded-4 mx-2 card p-3 d-flex flex-column gap-1 align-items-center">
+      <ConfirmationDialog
+        isOpen={isDialogOpen}
+        onClose={() => {
+          setIsDialogOpen(false);
+        }}
+        onConfirm={() => {
+          setIsAuthenticated(false);
+          // console.log("User Details before logout : ", userDetails);
+          setUserDetails({});
+          const isLogoutSuccess = logout(); //Remove Authorization headers
+          navigate("/");
+
+          if (isLogoutSuccess)
+            showToast("Logged out successfully. Have a great day!", SUCCESS);
+          else showToast("Failed to log out. Please try again later.", ERROR);
+
+          setIsDialogOpen(false);
+        }}
+        message={"Are you sure you want to logout?"}
+      />
+
       <img
         className="img-fluid custom-responsive-normal-img"
         src={profileImg}
@@ -93,7 +163,7 @@ const ProfileContent = ({ userDetails }) => {
         width={200}
       />
 
-      <h4 className="my-1">Welcome {userDetails.fullName},</h4>
+      <h4 className="my-1">Welcome {userDetails.fullName}</h4>
 
       <div className="d-flex flex-column gap-3 mt-4">
         <div>
@@ -146,18 +216,35 @@ const ProfileContent = ({ userDetails }) => {
 
         <button
           type="submit"
-          className="mt-5 btn btn-primary border border-2  shadow-lg"
+          className="mt-5 btn btn-primary border border-2 shadow-sm cursor-pointer"
           // disabled={formik.isSubmitting}
           disabled={true}
         >
           Modify
+        </button>
+
+        <button
+          type="submit"
+          className="btn btn-danger border border-2 shadow-sm"
+          onClick={() => {
+            setIsDialogOpen(true);
+          }}
+        >
+          Logout
         </button>
       </div>
     </div>
   );
 };
 
-const PostedEventsContent = ({ myEvents, setMyEvents }) => {
+const PostedEventsContent = ({
+  myEvents,
+  setMyEvents,
+  isAuthenticated,
+  userDetails,
+  setSortByContextMenu,
+  sortByContextMenu,
+}) => {
   /**
    * Method will remove an deleted event from the eventList based on the eventId.
    * This will re-render the Home.jsx component.
@@ -182,15 +269,120 @@ const PostedEventsContent = ({ myEvents, setMyEvents }) => {
     );
   }, []);
 
+  /**
+   * Method will be used to subscribe or unsubscribe an event (bell icon will adjust accordingly)
+   * @param {*} event
+   * @returns
+   */
+  async function rsvpBellHandler(event) {
+    if (!isAuthenticated) {
+      showToast("Kindly log in to subscribe to this event.", ERROR);
+      navigate("/login");
+      return;
+    }
+
+    const resultNum = await onRsvpButtonClick(
+      userDetails.userId,
+      event.eventId,
+      event.eventDate
+    );
+
+    // console.log(resultNum, event?.status);
+
+    if (resultNum === 1 && !event?.status) {
+      showToast(
+        `You've successfully subscribed to ${event.eventName} event.`,
+        SUCCESS
+      );
+    } else if (resultNum === 1 && event?.status) {
+      showToast(
+        `You've successfully unsubscribed to ${event.eventName} event.`,
+        SUCCESS
+      );
+    } else {
+      showToast(
+        `Something went wrong while subscribing to ${event.eventName} event.`,
+        ERROR
+      );
+    }
+    event.status = !event.status;
+    updateEventList(event);
+  }
+
+  /**
+   * Method will handle close the filter context menu if clicked outside of it
+   */
+  const handleSortByContextMenuClose = () => {
+    setSortByContextMenu({ visible: false, x: 0, y: 0 });
+  };
+
   return (
     <>
+      {sortByContextMenu?.visible && (
+        <SortByContextMenu
+          x={sortByContextMenu.x}
+          y={sortByContextMenu.y}
+          onClose={handleSortByContextMenuClose}
+          onSortingAlphabetiallyFilter={() => {
+            setMyEvents(getSortedEventsByAlphabets(myEvents));
+            handleSortByContextMenuClose();
+          }}
+          onSortingEventDateAscFilter={() => {
+            setMyEvents(getSortedEventsByEventDateNewToOld(myEvents));
+            handleSortByContextMenuClose();
+          }}
+          onSortingEventDateDscFilter={() => {
+            setMyEvents(getSortedEventsByEventDateOldToNew(myEvents));
+            handleSortByContextMenuClose();
+          }}
+        />
+      )}
+
+      <div className="container p-0 mb-2 mt-4 d-flex justify-content-end">
+        {myEvents && (
+          <button
+            className="cursor-pointer btn btn-outline-primary btn-light custom-responsive-normal-text p-0 px-1 d-flex align-items-center justify-content-center gap-1"
+            onClick={(e) => {
+              setSortByContextMenu({
+                visible: true,
+                x: e.pageX,
+                y: e.pageY,
+              });
+            }}
+          >
+            <MdFilterList />
+            Sort By
+          </button>
+        )}
+        {/* {myEvents && (
+            <MdFilterList
+              size={24}
+              className="cursor-pointer"
+              onClick={(e) => {
+                setSortByContextMenu({
+                  visible: true,
+                  x: e.pageX,
+                  y: e.pageY,
+                });
+              }}
+            />
+          )} */}
+      </div>
+
       {myEvents &&
         myEvents.map((event) => (
           <EventCard
             key={event.eventId}
             event={event}
-            updateEvent={updateEventList}
             deleteEventFromList={deleteEventFromList}
+            rsvpBellHandler={rsvpBellHandler}
+            customRef={(el) => {
+              if (event.verified === true) {
+                el?.classList.add("verified-event");
+              } else {
+                el?.classList.remove("verified-event");
+              }
+            }}
           />
         ))}
     </>

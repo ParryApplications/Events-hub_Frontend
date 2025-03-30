@@ -6,6 +6,7 @@ import { useAuth } from "./AuthContext";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getSuggestedAddress } from "../apis/thirdPartyRestApis";
 import { debounce } from "lodash";
+import { ERROR, showToast, SUCCESS } from "../utility/CommonUtility";
 
 export default function AddEditEventForm() {
   const isUpdateOperation = useLocation().pathname.includes("editEvent");
@@ -123,25 +124,28 @@ export default function AddEditEventForm() {
         ...event,
         ...values,
       };
-      console.log(reqBody);
+      // console.log(reqBody);
       const response = await updateEvent(reqBody);
       if (response) {
-        alert("Event updated successfully!");
+        showToast(
+          `${reqBody?.eventName} event has been updated successfully.`,
+          SUCCESS
+        );
         formik.resetForm();
         navigate("/");
       } else {
-        alert("Failed to update event. Please try again later.");
+        showToast("Event update failed. Please try again later.", ERROR);
       }
     } else {
       values.postedByUserId = userDetails.userId;
       values.postedByFullName = userDetails.fullName;
       const response = await postNewEvent(values);
       if (response) {
-        alert("Event added successfully!");
+        showToast(`${reqBody?.eventName} event successfully added.`, SUCCESS);
         formik.resetForm();
         navigate("/");
       } else {
-        alert("Failed to add event. Please try again later.");
+        showToast("Failed to add event. Please try again later.", ERROR);
       }
     }
   };
@@ -420,14 +424,18 @@ export default function AddEditEventForm() {
           <span className="invalid-feedback">{formik.errors.description}</span>
         </div>
 
-        <div className="mt-3 d-flex px-2 align-items-center justify-content-center gap-2">
+        <div className="mt-3 d-flex p-2 align-items-center justify-content-center gap-3 border">
           <input
             type="checkbox"
             id="ackCheckbox"
-            onChange={() => setIsAck((prevVal) => !prevVal)}
+            onChange={() => {
+              setIsAck((prevVal) => !prevVal);
+            }}
           />
-          <label htmlFor="ackCheckbox" className="mb-0">
-            I accept the <Link to="/">terms and conditions</Link>
+          <label htmlFor="ackCheckbox" className="mb-0 text-center">
+            I accept the <Link to="/">Terms & Conditions</Link>. Uploading
+            inappropriate content, including nudity or false information, may
+            result in legal action.
           </label>
         </div>
 

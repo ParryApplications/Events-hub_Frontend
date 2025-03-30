@@ -7,22 +7,36 @@ import { getAllEvents, getAllEventsWithRsvpStatus } from "../apis/restApis";
 import { useAuth } from "./AuthContext";
 import {
   appQuotes,
-  getSortedEventsByEventDate,
+  ERROR,
+  getSortedEventsByAlphabets,
+  getSortedEventsByEventDateNewToOld,
+  getSortedEventsByEventDateOldToNew,
   isPastEvent,
+  onRsvpButtonClick,
+  showToast,
+  SUCCESS,
 } from "../utility/CommonUtility";
 import { useNavigate } from "react-router-dom";
 import { useScrollContext } from "./ScrollContext";
 import Accordion from "./Accordion";
 import Typed from "typed.js";
+import { MdFilterList } from "react-icons/md";
+import SortByContextMenu from "./SortByContextMenu";
 
 export default function Home() {
   const { userDetails, isAuthenticated } = useAuth();
   const [eventList, setEventList] = useState([]);
+  const [pastEventsList, setPastEventsList] = useState([]);
   const [hasSubscribedEvent, setHasSubscribedEvent] = useState(false);
   const [hasPastEvent, setHasPastEvent] = useState(false);
+  const [sortByContextMenu, setSortByContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+  });
 
   const postEventFieldRef = useRef(null);
-  const quotesH2Ref = useRef(null);
+  // const isGreetDone = useRef(false);
 
   const { eventRefs } = useScrollContext();
 
@@ -40,11 +54,23 @@ export default function Home() {
     const allEvents = await getAllEvents();
 
     if (allEvents && Object.keys(allEvents).length > 0) {
-      const sortedEvents = getSortedEventsByEventDate(allEvents);
+      const futureEventsFiltered = allEvents.filter(
+        (e) => !isPastEvent(e.eventDate)
+      );
+
+      const sortedEvents =
+        getSortedEventsByEventDateNewToOld(futureEventsFiltered);
       setEventList(sortedEvents);
-      console.log(eventList);
+      // console.log(eventList);
+
+      const pastEventsFiltered = allEvents.filter((e) =>
+        isPastEvent(e.eventDate)
+      );
+
+      setPastEventsList(pastEventsFiltered);
     } else {
       console.log("No events found.");
+      showToast("No events found. Please come back later.", ERROR);
     }
   }
 
@@ -57,22 +83,38 @@ export default function Home() {
     const allRsvpEvents = await getAllEventsWithRsvpStatus(userDetails?.userId);
 
     if (allRsvpEvents && Object.keys(allRsvpEvents).length > 0) {
-      const sortedRsvpEvents = getSortedEventsByEventDate(allRsvpEvents);
+      const futureRsvpsEventsFiltered = allRsvpEvents.filter(
+        (e) => !isPastEvent(e.eventDate)
+      );
+      const sortedRsvpEvents = getSortedEventsByEventDateNewToOld(
+        futureRsvpsEventsFiltered
+      );
       setEventList(sortedRsvpEvents);
-      console.log(eventList);
+      // console.log(eventList);
+
+      const pastRsvpsEventsFiltered = allRsvpEvents.filter((e) =>
+        isPastEvent(e.eventDate)
+      );
+
+      setPastEventsList(pastRsvpsEventsFiltered);
     } else {
       console.log("No events found.");
+      showToast("No events found. Please come back later.", ERROR);
     }
   }
 
   useEffect(() => {
     //Quotes:
-    const typedQuotes = new Typed(quotesH2Ref.current, {
+    const typedQuotes = new Typed("#typed-quotes-h2", {
       strings: appQuotes(),
-      typeSpeed: 70,
-      backSpeed: 25,
+      typeSpeed: 50,
+      backSpeed: 30,
       loop: true,
       showCursor: true,
+      backDelay: 1500,
+      shuffle: true,
+      cursorChar: "|",
+      // cursorChar: "_",
     });
 
     return () => {
@@ -84,10 +126,15 @@ export default function Home() {
   useEffect(() => {
     const checkIfUserAuthenticated = () => {
       if (isAuthenticated === true) {
-        console.log("Authenticated User Detected");
+        // console.log(isGreetDone);
+        // if (!isGreetDone) {
+        //   showToast(`Hi ${userDetails.fullName}, ${getGreeting()}`, SUCCESS);
+        //   isGreetDone.current = true;
+        // }
+
         loadAllEvents_ForLoggedInUsers();
       } else {
-        console.log("Non-Authenticated User Detected");
+        // showToast("Kindly login or signup to enable all features.");
         loadAllEvents_ForNonLoggedInUser();
       }
     };
@@ -123,7 +170,7 @@ export default function Home() {
    */
   function onPostEventBtnHandler() {
     if (!isAuthenticated) {
-      alert("Please first log in to add or update events.");
+      showToast("Please log in to add or update events.", ERROR);
       navigate("/login");
       return;
     }
@@ -137,6 +184,8 @@ export default function Home() {
       };
       // postEventFieldRef.current.value = "";
       navigate("/addEvent", { state: { event } });
+    } else {
+      showToast("Invalid input, nothing to post.", ERROR);
     }
   }
 
@@ -152,44 +201,146 @@ export default function Home() {
 
   function onSubscribedHeadingClickHandler() {
     if (!isAuthenticated) {
-      alert("Please first log in to Subscribe events.");
+      showToast("Kindly log in to subscribe the events.", ERROR);
       navigate("/login");
       return;
     }
   }
 
+  /**
+   * Method will be used to subscribe or unsubscribe an event (bell icon will adjust accordingly)
+   * @param {*} event
+   * @returns
+   */
+  async function rsvpBellHandler(event) {
+    if (!isAuthenticated) {
+      showToast("Kindly log in to subscribe to this event.", ERROR);
+      navigate("/login");
+      return;
+    }
+
+    const resultNum = await onRsvpButtonClick(
+      userDetails.userId,
+      event.eventId,
+      event.eventDate
+    );
+
+    // console.log(resultNum, event?.status);
+
+    if (resultNum === 1 && !event?.status) {
+      showToast(
+        `You've successfully subscribed to ${event.eventName} event.`,
+        SUCCESS
+      );
+    } else if (resultNum === 1 && event?.status) {
+      showToast(
+        `You've successfully unsubscribed to ${event.eventName} event.`,
+        SUCCESS
+      );
+    } else {
+      showToast(
+        `Something went wrong while subscribing to ${event.eventName} event.`,
+        ERROR
+      );
+    }
+    event.status = !event.status;
+    updateEventList(event);
+  }
+
+  /**
+   * Method will handle close the filter context menu if clicked outside of it
+   */
+  const handleSortByContextMenuClose = () => {
+    setSortByContextMenu({ visible: false, x: 0, y: 0 });
+  };
+
   return (
     <>
-      <h2 id="typed-quotes-h2" className="d-inline p-1" ref={quotesH2Ref}></h2>
+      {sortByContextMenu?.visible && (
+        <SortByContextMenu
+          x={sortByContextMenu.x}
+          y={sortByContextMenu.y}
+          onClose={handleSortByContextMenuClose}
+          onSortingAlphabetiallyFilter={() => {
+            setEventList(getSortedEventsByAlphabets(eventList));
+            handleSortByContextMenuClose();
+          }}
+          onSortingEventDateAscFilter={() => {
+            setEventList(getSortedEventsByEventDateNewToOld(eventList));
+            handleSortByContextMenuClose();
+          }}
+          onSortingEventDateDscFilter={() => {
+            setEventList(getSortedEventsByEventDateOldToNew(eventList));
+            handleSortByContextMenuClose();
+          }}
+        />
+      )}
 
-      <div className="container">
-        <div className="d-flex gap-2 mx-2 my-4">
+      <div className="fixed-height">
+        <h3 id="typed-quotes-h2" className="d-inline p-1"></h3>
+      </div>
+
+      <div className="container my-3">
+        <div className="d-flex gap-2 mx-2 mt-4">
           <input
             type="text"
             name="postEventField"
             ref={postEventFieldRef}
             placeholder="Spotted an event? Post Now!"
-            className="form-control fw-bold shadow-sm justify-content-start align-self-center custom-responsive-normal-text"
+            // placeholder="Search events by name or venue, or post one."
+            className="form-control fw-bold shadow-sm justify-content-start align-self-center text-for-short-space"
             onKeyDown={onKeyDownHandler}
           />
+
           <button
-            className="btn btn-outline-success shadow-sm custom-responsive-normal-text justify-content-end align-self-center"
+            className="btn btn-outline-success shadow-sm text-for-short-space justify-content-end align-self-center"
             onClick={onPostEventBtnHandler}
           >
             Post
           </button>
         </div>
+        {/* <div className="d-flex justify-content-center gap-1 mt-2">
+          <span class="badge rounded-pill bg-primary">Verified</span>
+          <span class="badge rounded-pill bg-info badge-strike">Future</span>
+          <span class="badge rounded-pill bg-success">Subscribed</span>
+        </div> */}
       </div>
 
-      <div className="row justify-content-between">
+      <div className="p-0 mb-2 mt-4 d-flex justify-content-end">
+        {eventList && (
+          <button
+            className="cursor-pointer btn btn-outline-primary btn-light custom-responsive-normal-text p-0 px-1 d-flex align-items-center justify-content-center gap-1"
+            onClick={(e) => {
+              setSortByContextMenu({
+                visible: true,
+                x: e.pageX,
+                y: e.pageY,
+              });
+            }}
+          >
+            <MdFilterList />
+            Sort By
+          </button>
+        )}
+      </div>
+
+      <div className="row">
         <div className="col-12 col-lg-8">
           {eventList.map((e) => (
             <EventCard
               key={e.eventId}
               event={e}
-              updateEvent={updateEventList}
               deleteEventFromList={deleteEventFromList}
-              customRef={(el) => (eventRefs.current[e.eventId] = el)}
+              customRef={(el) => {
+                if (e.verified === true) {
+                  el?.classList.add("verified-event");
+                } else {
+                  el?.classList.remove("verified-event");
+                }
+                eventRefs.current[e.eventId] = el;
+              }}
+              rsvpBellHandler={rsvpBellHandler}
+              updateEvent={updateEventList}
             />
           ))}
           <hr id="accordion-hr-start" />
@@ -225,7 +376,7 @@ export default function Home() {
                       <SubscribedEventCard
                         key={e.eventId}
                         event={e}
-                        updateEvent={updateEventList}
+                        rsvpBellHandler={rsvpBellHandler}
                       />
                     );
                   })}
@@ -242,8 +393,8 @@ export default function Home() {
               className="overflow-auto d-flex flex-column"
               style={{ maxHeight: hasPastEvent ? "55vh" : "0vh" }}
             >
-              {eventList
-                .filter((e) => isPastEvent(e.eventDate))
+              {pastEventsList
+                // .filter((e) => isPastEvent(e.eventDate))
                 .map((e) => {
                   if (!hasPastEvent) setHasPastEvent(true);
 

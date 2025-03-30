@@ -2,6 +2,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { saveUser } from "../apis/restApis";
 import { useNavigate } from "react-router-dom";
+import { ERROR, showToast, SUCCESS } from "../utility/CommonUtility";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -24,7 +25,15 @@ export default function Signup() {
     //Submit form data to the server
     console.log("Form submitting with Values: ", values);
     const response = await saveUser(values);
-    console.log(response);
+
+    if (response)
+      showToast(
+        "Welcome! Your signup is complete. Let's get started!",
+        SUCCESS
+      );
+    else
+      showToast("We're experiencing issues. Please try again shortly.", ERROR);
+
     formik.resetForm();
     navigate("/login");
   };

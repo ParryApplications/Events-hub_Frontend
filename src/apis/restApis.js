@@ -37,11 +37,13 @@ export async function saveUser(user) {
   try {
     const savedUser = await eventsHubApiClient.post(POST_SAVE_USER, user);
     // console.log(savedUser.data);
-    return `${savedUser.fullName} user saved successfully`;
+    if (savedUser && savedUser.data) {
+      return true;
+    }
   } catch (err) {
     console.error(`Error while saving user: ${err.message}`);
-    return "Failed to save user";
   }
+  return false;
 }
 /**
  * If User is valid, Method will return the user details fetched by username
@@ -69,9 +71,11 @@ export async function logout() {
   try {
     delete eventsHubApiClient.defaults.headers["Authorization"];
     console.log("Logged out successfully");
+    return true;
   } catch (err) {
     console.error(`Error while logging out: ${err.message}`);
   }
+  return false;
 }
 
 /**
@@ -101,9 +105,11 @@ export async function getAllEventsWithRsvpStatus(userId) {
 export async function toggleRsvpStatus(rsvp) {
   try {
     await eventsHubApiClient.put(PUT_RSVP_BY_EVENTID_USERID, rsvp);
+    return 1;
   } catch (err) {
     console.error(`Error while toggling RSVP status: ${err.message}`);
   }
+  return -1;
 }
 
 /**
@@ -232,6 +238,7 @@ export async function updateVerificationOfAnEvent_ADMIN(userId, eventId) {
       `${ADMIN_BASE_URL}eventVerification/user/${userId}/event/${eventId}`
     );
     if (response?.data) {
+      console.log(response.data);
       console.log("Event verification updated successfully");
       return response.data;
     }
@@ -239,4 +246,22 @@ export async function updateVerificationOfAnEvent_ADMIN(userId, eventId) {
     console.error(`Error while updating event verification: ${err.message}`);
   }
   return undefined;
+}
+
+/**
+ * Fetch an event from the server (without RSVP details)
+ * Using this method as logged in user is not persisted
+ * @returns Signle Event Details
+ */
+export async function getAnEvent(eventId) {
+  try {
+    const response = await eventsHubApiClient.get(
+      `${EVENT_BASE_URL}/${eventId}`
+    );
+    console.log(response.data);
+    return response?.data;
+  } catch (err) {
+    console.error(`Error while fetching eventId-${eventId} : ${err.message}`);
+  }
+  return null;
 }
