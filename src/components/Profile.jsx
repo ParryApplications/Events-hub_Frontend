@@ -194,7 +194,7 @@ const ProfileContent = ({
 
         <div>
           <label htmlFor="bioFiieldId">About</label>
-          <input
+          <textarea
             id="bioFiieldId"
             disabled={true}
             className="form-control shadow-sm"

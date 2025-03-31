@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   deleteEventByEventId,
   updateVerificationOfAnEvent_ADMIN,
@@ -13,6 +13,7 @@ import {
   showToast,
   SUCCESS,
 } from "../utility/CommonUtility";
+import profileImg from "../assets/neutral-profile-img.png";
 import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import ContextMenu from "./ContextMenu";
@@ -21,7 +22,7 @@ import ConfirmationDialog from "./ConfirmationDialog";
 
 import { MdLocationOn, MdMoreVert } from "react-icons/md";
 import { BiBell, BiBellOff } from "react-icons/bi";
-import { RiShareForwardLine } from "react-icons/ri";
+import { RiShareForwardLine, RiUserHeartFill } from "react-icons/ri";
 
 export default function EventCard({
   event,
@@ -33,6 +34,7 @@ export default function EventCard({
   const { userDetails, isAuthenticated } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   let isEditIconClicked = useRef(false);
+  const [showUserContri, setShowUserContri] = useState(false); //Works on hover only
 
   const [contextMenu, setContextMenu] = useState({
     visible: false,
@@ -202,45 +204,63 @@ export default function EventCard({
             {event.description}
           </p>
 
-          {/* <p className="text-end custom-responsive-normal-text card-text">
-            Posted On {convertDateIntoReadableFormat(event.postedOn)}, By{" "}
-            {event.postedByFullName}
-          </p> */}
-          <div className="align-self-end d-flex align-items-center justify-content-center gap-3">
-            <RiShareForwardLine
-              size={24}
-              className="cursor-pointer"
-              onClick={() => handleShare(event.eventId)}
-            />
-            {event?.status
-              ? !isPastEvent(event.eventDate) && (
-                  <BiBellOff
-                    className="cursor-pointer"
-                    size={24}
-                    onClick={async () => await rsvpBellHandler(event)}
-                  />
-                )
-              : !isPastEvent(event.eventDate) && (
-                  <BiBell
-                    size={24}
-                    className="cursor-pointer"
-                    onClick={async () => await rsvpBellHandler(event)}
-                  />
-                )}
-            {/* <FaBell size={24} />
-            <FaBellSlash size={24} />
-            <MdNotifications size={24} />
-            <MdNotificationsOff size={24} /> */}
-            {/* { {!isPastEvent(event.eventDate) && (
-              <img
-                src={event?.status ? bellOffIcon : bellOnIcon}
-                alt={event?.status ? "Bell Off" : "Bell On"}
-                className="event-card-rsvp-btn custom-responsive-normal-icon"
-                onClick={}
+          <div className="d-flex align-items-center justify-content-between">
+            <div>
+              <RiUserHeartFill
+                size={20}
+                onMouseEnter={() => {
+                  setShowUserContri((prevStatus) => !prevStatus);
+                }}
+                onMouseLeave={() => {
+                  setShowUserContri((prevStatus) => !prevStatus);
+                }}
               />
-            )} } */}
+            </div>
+
+            <div className="d-flex gap-3">
+              <RiShareForwardLine
+                size={24}
+                className="cursor-pointer"
+                onClick={() => handleShare(event.eventId)}
+              />
+              {event?.status
+                ? !isPastEvent(event.eventDate) && (
+                    <BiBellOff
+                      className="cursor-pointer"
+                      size={24}
+                      onClick={async () => await rsvpBellHandler(event)}
+                    />
+                  )
+                : !isPastEvent(event.eventDate) && (
+                    <BiBell
+                      size={24}
+                      className="cursor-pointer"
+                      onClick={async () => await rsvpBellHandler(event)}
+                    />
+                  )}
+            </div>
           </div>
         </div>
+        {/* <div className="d-flex justify-content-center align-items-center vh-100"> */}
+        <div className="position-relative">
+          {showUserContri && (
+            <div className="hover-message">
+              {event?.verified === true ? (
+                <>
+                  Thanks{" "}
+                  {event.postedByFullName.length > 11
+                    ? event.postedByFullName.split(" ")[0]
+                    : event.postedByFullName}
+                  , appreciate your authentic post!
+                </>
+              ) : (
+                <>Posted by {event.postedByFullName}, Not yet verified!</>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* </div> */}
       </div>
 
       {isAuthenticated &&

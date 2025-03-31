@@ -50,11 +50,12 @@
   animation: blink 0.7s infinite; /* Optional: Blinking effect */
 }
 
-#typed-quotes-h2 {
+.typed-quotes-style {
   color: #ddd;
   background: linear-gradient(rgb(213, 229, 241), rgb(166, 208, 240));
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  display: inline;
 }
 
 .custom-event-img-style {
@@ -149,4 +150,61 @@
 
 .autocomplete-item:hover {
   background-color: #f8f9fa;
+}
+
+.contribution-badge {
+  background: #f8f9fa; /* Light gray background */
+  border-left: 4px solid #007bff; /* Blue left border */
+  max-width: 280px;
+}
+
+.faq-accordion-style {
+  background-color: #1e3a8a;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #007bff, #6610f2);
+  padding: 80px 0;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #007bff, #6610f2);
+  padding: 80px 0;
+}
+
+/* Info Cards */
+.info-card {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Contact Section */
+.contact-section {
+  background: linear-gradient(135deg, #6610f2, #007bff);
+  padding: 60px 0;
+  margin-top: 50px;
+}
+
+/* Hover Message (Appreciate on User Contribution) */
+.hover-message {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: opacity 0.3s ease-in-out;
 }

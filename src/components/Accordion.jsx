@@ -1,7 +1,7 @@
 export default function Accordion() {
   return (
     <div className="accordion mb-4" id="faq-accordion">
-      <h4 className="rounded-pill bg-primary bg-gradient text-white p-1 text-center fs-4">
+      <h4 className="rounded-pill faq-accordion-style text-white p-1 text-center fs-4">
         FAQs
       </h4>
       <div className="accordion-item">

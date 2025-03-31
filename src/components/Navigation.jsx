@@ -91,6 +91,12 @@ export default function Navigation() {
               )}
 
               <li className="nav-item" data-bs-dismiss="offcanvas">
+                <NavLink className="nav-link" to={"/about"}>
+                  About
+                </NavLink>
+              </li>
+
+              <li className="nav-item" data-bs-dismiss="offcanvas">
                 {isAuthenticated === true ? (
                   <button
                     className="nav-link"

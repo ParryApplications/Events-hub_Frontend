@@ -126,26 +126,28 @@ export default function AddEditEventForm() {
       };
       // console.log(reqBody);
       const response = await updateEvent(reqBody);
-      if (response) {
+      if (!response) {
+        showToast("Event update failed. Please try again later.", ERROR);
+      } else {
         showToast(
           `${reqBody?.eventName} event has been updated successfully.`,
           SUCCESS
         );
         formik.resetForm();
         navigate("/");
-      } else {
-        showToast("Event update failed. Please try again later.", ERROR);
       }
     } else {
       values.postedByUserId = userDetails.userId;
       values.postedByFullName = userDetails.fullName;
       const response = await postNewEvent(values);
-      if (response) {
-        showToast(`${reqBody?.eventName} event successfully added.`, SUCCESS);
+      console.log(!response);
+      if (!response) {
+        showToast("Failed to add event. Please try again later.", ERROR);
+      } else {
+        console.log("Else block running");
+        showToast(`${values?.eventName} event successfully added.`, SUCCESS);
         formik.resetForm();
         navigate("/");
-      } else {
-        showToast("Failed to add event. Please try again later.", ERROR);
       }
     }
   };

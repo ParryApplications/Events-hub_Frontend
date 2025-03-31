@@ -105,15 +105,15 @@ export default function Home() {
 
   useEffect(() => {
     //Quotes:
-    const typedQuotes = new Typed("#typed-quotes-h2", {
+    const typedQuotes = new Typed("#typed-quotes-h3", {
       strings: appQuotes(),
       typeSpeed: 50,
       backSpeed: 30,
       loop: true,
-      showCursor: true,
+      showCursor: false,
       backDelay: 1500,
-      shuffle: true,
-      cursorChar: "|",
+      shuffle: false,
+      // cursorChar: "|",
       // cursorChar: "_",
     });
 
@@ -276,8 +276,13 @@ export default function Home() {
         />
       )}
 
-      <div className="fixed-height">
-        <h3 id="typed-quotes-h2" className="d-inline p-1"></h3>
+      <div className="fixed-height d-flex align-items-stat justify-content-start">
+        <div>
+          <h3 id="typed-quotes-h3" className="typed-quotes-style" />
+          <span className="typed-quotes-style">
+            <strong>_</strong>
+          </span>
+        </div>
       </div>
 
       <div className="container my-3">
@@ -343,8 +348,6 @@ export default function Home() {
               updateEvent={updateEventList}
             />
           ))}
-          <hr id="accordion-hr-start" />
-          <Accordion />
         </div>
 
         <div className="col-12 col-lg-4">
@@ -402,6 +405,9 @@ export default function Home() {
                 })}
             </div>
           </div>
+
+          <hr />
+          <Accordion />
         </div>
       </div>
     </>
