@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { login } from "../apis/restApis";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import { getGreeting, showToast, SUCCESS } from "../utility/CommonUtility";
 
@@ -110,9 +110,9 @@ export default function Login() {
 
       <p className="d-flex gap-1">
         New Here?{" "}
-        <a className="btn btn-outline-secondary py-0 px-2" href="/signup">
+        <Link className="btn btn-outline-secondary py-0 px-2" to="/signup">
           Sign Up
-        </a>
+        </Link>
       </p>
     </div>
   );

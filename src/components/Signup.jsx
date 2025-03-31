@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { saveUser } from "../apis/restApis";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ERROR, showToast, SUCCESS } from "../utility/CommonUtility";
 
 export default function Signup() {
@@ -189,9 +189,9 @@ export default function Signup() {
       </form>
       <p className="d-flex gap-1">
         Already have an account?{" "}
-        <a className="btn btn-outline-secondary py-0 px-2" href="/login">
+        <Link className="btn btn-outline-secondary py-0 px-2" to="/login">
           Login
-        </a>
+        </Link>
       </p>
     </div>
   );
