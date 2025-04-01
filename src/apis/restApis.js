@@ -1,4 +1,4 @@
-import { eventsHubApiClient } from "./CommonApiUtil";
+import { BACKEND_BASE_URL, eventsHubApiClient } from "./CommonApiUtil";
 
 //API URL CONSTANTS:
 const EVENT_BASE_URL = "/event/api";
@@ -35,6 +35,8 @@ export async function getAllEvents() {
  */
 export async function saveUser(user) {
   try {
+    console.log(BACKEND_BASE_URL);
+    console.log(eventsHubApiClient.getUri());
     const savedUser = await eventsHubApiClient.post(POST_SAVE_USER, user);
     // console.log(savedUser.data);
     if (savedUser && savedUser.data) {
