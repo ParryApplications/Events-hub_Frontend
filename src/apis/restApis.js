@@ -12,6 +12,7 @@ const REMOVE_PAST_RSVPS_BY_USERID = "/rsvp/api/removePastEvents/{userId}";
 const GET_MY_POSTED_EVENTS_BY_USERID = "/event/api/user/{userId}";
 const GET_USER_DETAILS_BY_USERID = "/user/api/{userId}";
 const ADMIN_BASE_URL = "/admin/api/";
+const SECURITY_BASE_URL = "/security/api";
 
 /**
  * Fetch all events from the server (without RSVP details)
@@ -35,8 +36,6 @@ export async function getAllEvents() {
  */
 export async function saveUser(user) {
   try {
-    console.log(BACKEND_BASE_URL);
-    console.log(eventsHubApiClient.getUri());
     const savedUser = await eventsHubApiClient.post(POST_SAVE_USER, user);
     // console.log(savedUser.data);
     if (savedUser && savedUser.data) {
@@ -267,3 +266,20 @@ export async function getAnEvent(eventId) {
   }
   return null;
 }
+
+export const verifyEmailApi = async (token, userId) => {
+  try {
+    const response = await eventsHubApiClient.post(
+      `${SECURITY_BASE_URL}/verify/email`,
+      {
+        verificationToken: token,
+        userId: userId,
+      }
+    );
+    // console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error(`Error while verifying email: ${err.message}`);
+    return undefined;
+  }
+};

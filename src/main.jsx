@@ -17,6 +17,7 @@ import NotFound from "./components/NotFound.jsx";
 import { ToastContainer } from "react-toastify";
 import SingleEvent from "./components/SingleEvent.jsx";
 import About from "./components/About.jsx";
+import VerificationPage from "./components/VerificationPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <About />,
+      },
+      {
+        path: "/verify",
+        element: <VerificationPage />,
       },
     ],
   },

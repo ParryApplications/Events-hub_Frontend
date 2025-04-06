@@ -409,10 +409,11 @@ export default function AddEditEventForm() {
           <label htmlFor="descriptionFieldId" className="form-label">
             Additional Information
           </label>
-          <input
+          <textarea
             id="descriptionFieldId"
             type="text"
             name="description"
+            placeholder="What the event is about and where tickets can be booked (if applicable)."
             className={`form-control ${
               formik.touched.description && formik.errors.description
                 ? "is-invalid"

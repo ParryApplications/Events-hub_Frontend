@@ -28,7 +28,7 @@ export default function Signup() {
 
     if (response)
       showToast(
-        "Welcome! Your signup is complete. Let's get started!",
+        "A verification email has been sent. Please check your inbox.",
         SUCCESS
       );
     else
@@ -148,7 +148,8 @@ export default function Signup() {
             className={`form-control ${
               formik.touched.password && formik.errors.password
                 ? "is-invalid"
-                : formik.values.password.trim() !== ""
+                : formik.values.password.trim() !== "" &&
+                  formik.values.password.length > 9
                 ? "is-valid"
                 : ""
             } shadow-sm`}

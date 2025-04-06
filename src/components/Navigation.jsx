@@ -2,15 +2,29 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import { logout } from "../apis/restApis";
 import EventIcon from "../assets/app-logo-icon.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { ERROR, showToast, SUCCESS } from "../utility/CommonUtility";
+import EventBus from "../utility/EventBus";
 
 export default function Navigation() {
   const { isAuthenticated, setIsAuthenticated, setUserDetails, userDetails } =
     useAuth();
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState();
+  const [faqDivRef, setFaqDivRef] = useState(null);
+
+  useEffect(() => {
+    EventBus.on("faqDivRef", (ref) => {
+      setFaqDivRef(ref);
+    });
+
+    return () => {
+      EventBus.off("faqDivRef");
+    };
+  }, []);
+
+  const clearFaqDivRef = () => setFaqDivRef(null);
 
   return (
     <div>
@@ -75,7 +89,11 @@ export default function Navigation() {
               </li>
 
               {isAuthenticated === true && (
-                <li className="nav-item" data-bs-dismiss="offcanvas">
+                <li
+                  className="nav-item"
+                  data-bs-dismiss="offcanvas"
+                  onClick={clearFaqDivRef}
+                >
                   <NavLink className="nav-link" to={"/profile"}>
                     Profile
                   </NavLink>
@@ -83,20 +101,49 @@ export default function Navigation() {
               )}
 
               {isAuthenticated === true && (
-                <li className="nav-item" data-bs-dismiss="offcanvas">
+                <li
+                  className="nav-item"
+                  data-bs-dismiss="offcanvas"
+                  onClick={clearFaqDivRef}
+                >
                   <NavLink className="nav-link" to={"/addEvent"}>
                     Post
                   </NavLink>
                 </li>
               )}
 
-              <li className="nav-item" data-bs-dismiss="offcanvas">
+              {faqDivRef && faqDivRef?.current && (
+                <li
+                  className="nav-item nav-link cursor-pointer"
+                  data-bs-dismiss="offcanvas"
+                  onClick={() => {
+                    console.log(faqDivRef);
+                    setTimeout(() => {
+                      faqDivRef.current?.scrollIntoView({
+                        behavior: "smooth",
+                      });
+                    }, 500);
+                  }}
+                >
+                  FAQ
+                </li>
+              )}
+
+              <li
+                className="nav-item"
+                data-bs-dismiss="offcanvas"
+                onClick={clearFaqDivRef}
+              >
                 <NavLink className="nav-link" to={"/about"}>
                   About
                 </NavLink>
               </li>
 
-              <li className="nav-item" data-bs-dismiss="offcanvas">
+              <li
+                className="nav-item"
+                data-bs-dismiss="offcanvas"
+                onClick={clearFaqDivRef}
+              >
                 {isAuthenticated === true ? (
                   <button
                     className="nav-link"

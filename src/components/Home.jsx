@@ -34,7 +34,6 @@ export default function Home() {
     x: 0,
     y: 0,
   });
-
   const postEventFieldRef = useRef(null);
   // const isGreetDone = useRef(false);
 
@@ -59,7 +58,7 @@ export default function Home() {
       );
 
       const sortedEvents =
-        getSortedEventsByEventDateNewToOld(futureEventsFiltered);
+        getSortedEventsByEventDateOldToNew(futureEventsFiltered);
       setEventList(sortedEvents);
       // console.log(eventList);
 
@@ -86,7 +85,7 @@ export default function Home() {
       const futureRsvpsEventsFiltered = allRsvpEvents.filter(
         (e) => !isPastEvent(e.eventDate)
       );
-      const sortedRsvpEvents = getSortedEventsByEventDateNewToOld(
+      const sortedRsvpEvents = getSortedEventsByEventDateOldToNew(
         futureRsvpsEventsFiltered
       );
       setEventList(sortedRsvpEvents);
@@ -304,15 +303,10 @@ export default function Home() {
             Post
           </button>
         </div>
-        {/* <div className="d-flex justify-content-center gap-1 mt-2">
-          <span class="badge rounded-pill bg-primary">Verified</span>
-          <span class="badge rounded-pill bg-info badge-strike">Future</span>
-          <span class="badge rounded-pill bg-success">Subscribed</span>
-        </div> */}
       </div>
 
       <div className="p-0 mb-2 mt-4 d-flex justify-content-end">
-        {eventList && (
+        {eventList?.length > 0 && (
           <button
             className="cursor-pointer btn btn-outline-primary btn-light custom-responsive-normal-text p-0 px-1 d-flex align-items-center justify-content-center gap-1"
             onClick={(e) => {
@@ -342,7 +336,7 @@ export default function Home() {
                 } else {
                   el?.classList.remove("verified-event");
                 }
-                eventRefs.current[e.eventId] = el;
+                if (isAuthenticated) eventRefs.current[e.eventId] = el;
               }}
               rsvpBellHandler={rsvpBellHandler}
               updateEvent={updateEventList}

@@ -73,7 +73,7 @@ const About = () => {
               <FaLinkedin size={24} /> LinkedIn
             </a>
             <a
-              href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=parryapplications@gmail.com"
+              href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=eventshub.parryapplications@gmail.com"
               target="_blank"
               className="btn btn-outline-light btn-lg d-flex align-items-center gap-2"
             >

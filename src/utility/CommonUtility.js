@@ -6,6 +6,7 @@ import { FRONTEND_BASE_URL } from "../apis/CommonApiUtil";
 export const ADMIN_ROLE = "ADMIN";
 export const ERROR = "error";
 export const SUCCESS = "success";
+export const urlRegexExp = /(https?:\/\/[^\s]+)/g;
 
 export function getSortedEventsByEventDateNewToOld(eventList) {
   return eventList.sort(
@@ -78,17 +79,29 @@ export function appQuotes() {
  */
 export const showToast = (message, type) => {
   toast(message, {
-    position: "top-right", // Position on the right
-    autoClose: 3000, // Auto dismiss in 2s
-    hideProgressBar: true,
-    closeOnClick: false,
+    position: "top-right",
+    autoClose: 3000, // Auto-dismiss in 3s
+    hideProgressBar: false, // Keep progress bar for visibility
+    closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
-    progress: undefined,
+    closeButton: false, // Brevo-style has no close button
+    transition: Slide,
     className: type === SUCCESS ? "toast-success" : "toast-error",
     bodyClassName: "toast-body",
-    closeButton: false,
-    transition: Slide,
+    style: {
+      background: "#333", // Brevo dark theme
+      color: "#fff",
+      borderRadius: "8px",
+      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+      fontSize: "14px",
+      fontWeight: "500",
+      padding: "12px 16px",
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+    },
+    icon: type === SUCCESS ? "✅" : "❌", // Emoji-based status icons
   });
 };
 
