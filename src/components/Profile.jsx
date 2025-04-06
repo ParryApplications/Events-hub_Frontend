@@ -28,25 +28,25 @@ export default function Profile() {
   const [myEvents, setMyEvents] = useState([]);
   const [isProfileTabActive, setProfileTabActive] = useState(true);
   const navigate = useNavigate();
-  const [isDialogOpen, setIsDialogOpen] = useState();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const profileButtonRef = useRef(null);
   const myEventsButtonRef = useRef(null);
 
-  const isNoteDone = useRef(false);
+  // const isNoteDone = useRef(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/");
     }
 
-    if (isNoteDone && isNoteDone?.current === false) {
-      showToast(
-        "Currently users are not allowed to modify their profile.",
-        ERROR
-      );
-      isNoteDone.current = true;
-    }
+    // if (isNoteDone && isNoteDone?.current === false) {
+    // showToast(
+    //   "Currently users are not allowed to modify their profile.",
+    //   ERROR
+    // );
+    //   isNoteDone.current = true;
+    // }
 
     const loadMyEvents = async () => {
       const eventsList = await getMyPostedEventsByUserId(userDetails?.userId);
@@ -173,7 +173,7 @@ const ProfileContent = ({
             disabled={true}
             className="form-control shadow-sm"
             name="email"
-            value={userDetails.email}
+            value={userDetails.email || ""}
           />
         </div>
 
@@ -187,7 +187,7 @@ const ProfileContent = ({
               disabled={true}
               className="form-control shadow-sm"
               name="username"
-              value={userDetails.username}
+              value={userDetails.username || ""}
             />
           </div>
         </div>
@@ -199,7 +199,7 @@ const ProfileContent = ({
             disabled={true}
             className="form-control shadow-sm"
             name="bio"
-            value={userDetails.bio}
+            value={userDetails.bio || ""}
           />
         </div>
 
@@ -210,7 +210,7 @@ const ProfileContent = ({
             disabled={true}
             className="form-control shadow-sm"
             name="role"
-            value={userDetails.role}
+            value={userDetails.role || ""}
           />
         </div>
 
@@ -339,7 +339,7 @@ const PostedEventsContent = ({
       )}
 
       <div className="container p-0 mb-2 mt-4 d-flex justify-content-end">
-        {myEvents && (
+        {myEvents?.length > 0 && (
           <button
             className="cursor-pointer btn btn-outline-primary btn-light custom-responsive-normal-text p-0 px-1 d-flex align-items-center justify-content-center gap-1"
             onClick={(e) => {

@@ -12,8 +12,8 @@ import {
   isPastEvent,
   showToast,
   SUCCESS,
+  urlRegexExp,
 } from "../utility/CommonUtility";
-import profileImg from "../assets/neutral-profile-img.png";
 import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import ContextMenu from "./ContextMenu";
@@ -112,6 +112,23 @@ export default function EventCard({
     });
   };
 
+  function findUrls(text) {
+    return text.split(urlRegexExp).map((textPart, index) =>
+      urlRegexExp.test(textPart) ? (
+        <a
+          key={index}
+          href={textPart}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {textPart}
+        </a>
+      ) : (
+        textPart
+      )
+    );
+  }
+
   return (
     <div
       className="d-flex justify-content-center"
@@ -201,7 +218,7 @@ export default function EventCard({
           </h5>
 
           <p className="card-text custom-responsive-normal-text text-center">
-            {event.description}
+            {findUrls(event.description)}
           </p>
 
           <div className="d-flex align-items-center justify-content-between">

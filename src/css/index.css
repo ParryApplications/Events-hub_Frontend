@@ -71,30 +71,27 @@ form label {
   width: 30px;
 }
 
-/* For Toast Styling */
+/* react toastify styling */
+.toast-body {
+  font-family: "Inter", sans-serif;
+}
+
 .toast-success {
-  background-color: #edf8ef !important; /* Light red tint */
+  background: linear-gradient(135deg, #0077b6, #00b4d8);
+
+  /* background: linear-gradient(135deg, #d4cccc, #d4c5c5) !important; */
   border-left: 5px solid #2fd34a; /* Red left border */
-  transform: translateX(100%);
-  animation: slideIn 0.5s forwards;
-  font-weight: 700;
+  border-top: 5px solid #2fd34a; /* Red left border */
+  color: #fff !important;
 }
 
 .toast-error {
-  background-color: #f8eded !important; /* Light red tint */
-  border-left: 5px solid #d32f2f; /* Red left border */
-  transform: translateX(100%);
-  animation: slideIn 0.5s forwards;
-  font-weight: 700;
-}
+  background: linear-gradient(135deg, #0077b6, #00b4d8);
 
-@keyframes slideIn {
-  from {
-    transform: translateX(0%);
-  }
-  to {
-    transform: translateX(0%);
-  }
+  /* background: linear-gradient(135deg, #cac2c2, #cababa) !important; */
+  border-left: 5px solid #d32f2f; /* Red left border */
+  border-top: 5px solid #d32f2f; /* Red left border */
+  color: #fff !important;
 }
 
 /* .badge-strike {

@@ -1,6 +1,14 @@
+import { useEffect, useRef } from "react";
+import EventBus from "../utility/EventBus.jsx";
 export default function Accordion() {
+  const faqDivRef = useRef(null);
+
+  useEffect(() => {
+    EventBus.emit("faqDivRef", faqDivRef);
+  }, []);
+
   return (
-    <div className="accordion mb-4" id="faq-accordion">
+    <div className="accordion mb-4" id="faq-accordion" ref={faqDivRef}>
       <h4 className="rounded-pill faq-accordion-style text-white p-1 text-center fs-4">
         FAQs
       </h4>

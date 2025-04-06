@@ -208,3 +208,23 @@
   white-space: nowrap;
   transition: opacity 0.3s ease-in-out;
 }
+
+/* Email Verification Page Style */
+.verification-box {
+  max-width: 400px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.icon-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
