@@ -22,6 +22,21 @@ import Accordion from "./Accordion";
 import Typed from "typed.js";
 import { MdFilterList } from "react-icons/md";
 import SortByContextMenu from "./SortByContextMenu";
+import { Helmet } from "react-helmet-async";
+
+<Helmet>
+  <title>EventsHub | Explore Events Near You</title>
+  <meta
+    name="description"
+    content="Effortlessly find and organize events with EventsHub, and receive reminders to stay on track."
+  />
+  <meta
+    name="keywords"
+    content="Events, Event Management, Bookings, Concerts, Webinars, standups, standup comedy, fest, college fests"
+  />
+  <meta name="author" content="ParryApplications" />
+  <link rel="canonical" href="https://www.eventshub.events/" />
+</Helmet>;
 
 export default function Home() {
   const { userDetails, isAuthenticated } = useAuth();

@@ -18,6 +18,7 @@ import { ToastContainer } from "react-toastify";
 import SingleEvent from "./components/SingleEvent.jsx";
 import About from "./components/About.jsx";
 import VerificationPage from "./components/VerificationPage.jsx";
+import { HelmetProvider } from "react-helmet-async";
 
 const router = createBrowserRouter([
   {
@@ -78,11 +79,11 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
-  <>
+  <HelmetProvider>
     <ToastContainer />
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
-  </>
+  </HelmetProvider>
   // </StrictMode>
 );

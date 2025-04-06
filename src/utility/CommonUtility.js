@@ -57,6 +57,7 @@ export function convertDateIntoReadableFormat(date) {
  */
 export function appQuotes() {
   return [
+    "Explore Events Near You",
     "Big events, small reminders-stay in the loop!",
     "See it, share it, celebrate it! What's happening next?",
     "Big or small, every event deserves the spotlight!",
