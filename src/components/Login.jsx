@@ -19,7 +19,7 @@ export default function Login() {
     // console.log("Form is submitting with Values: ", values);
     const response = await login(values);
     if (response && Object.keys(response).length > 0) {
-      console.log(response);
+      // console.log(response);
       setUserDetails(response);
       setIsAuthenticated(true);
       navigate("/");

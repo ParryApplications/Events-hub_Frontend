@@ -23,7 +23,7 @@ export default function Signup() {
   //Form Submission Handler:
   const submitFormHandler = async (values) => {
     //Submit form data to the server
-    console.log("Form submitting with Values: ", values);
+    // console.log("Form submitting with Values: ", values);
     const response = await saveUser(values);
 
     if (response)

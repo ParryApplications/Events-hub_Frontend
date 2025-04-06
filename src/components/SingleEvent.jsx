@@ -13,7 +13,7 @@ import { useAuth } from "./AuthContext";
 export default function SingleEvent() {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  console.log(eventId);
+  // console.log(eventId);
   const [event, setEvent] = useState(null);
   const { isAuthenticated } = useAuth();
 
@@ -21,7 +21,7 @@ export default function SingleEvent() {
     if (eventId) {
       getAnEvent(eventId)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           if (res == null || res == "") {
             showToast(
               "Oops! The URL appears to be incorrect or no longer valid. Redirecting to the Home page.",

@@ -33,7 +33,7 @@ export function isPastEvent(eventDate) {
  * @param event
  */
 export async function onRsvpButtonClick(userId, eventId, eventDate) {
-  console.log("RSVP button clicked");
+  // console.log("RSVP button clicked");
   const body = {
     userId: userId,
     eventId: eventId,

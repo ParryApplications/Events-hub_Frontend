@@ -30,7 +30,7 @@ export async function getSuggestedAddress(query, abortControllerSignal) {
     return undefined;
   } catch (e) {
     if (e.name === "AbortError") {
-      console.log("Old Request has been aborted for query: ", query);
+      // console.log("Old Request has been aborted for query: ", query);
     } else {
       console.error(
         `Error fetching suggested addresses from Photon API - getSuggestedAddress(): ${e.message}`
