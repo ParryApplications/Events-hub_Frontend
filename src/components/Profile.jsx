@@ -261,7 +261,7 @@ const PostedEventsContent = ({
    * @param updatedEvent
    */
   const updateEventList = useCallback((updatedEvent) => {
-    console.log("Updating eventList function called!");
+    // console.log("Updating eventList function called!");
     setMyEvents((prevEvents) =>
       prevEvents.map((event) =>
         event.eventId === updatedEvent.eventId ? updatedEvent : event

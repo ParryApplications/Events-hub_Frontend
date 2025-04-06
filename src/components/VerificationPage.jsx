@@ -23,7 +23,7 @@ export default function VerificationPage() {
   const verifyEmail = async () => {
     setStatus("loading");
     try {
-      console.log(token, userId);
+      // console.log(token, userId);
       if (token) {
         const response = await verifyEmailApi(token, userId);
         // console.log(response);

@@ -93,11 +93,11 @@ export default function AddEditEventForm() {
       return;
     }
 
-    console.log(selectedVenueDetails);
-    console.log(
-      buildVenueNameFromDetails(selectedVenueDetails?.current?.properties)
-    );
-    console.log(values.venue);
+    // console.log(selectedVenueDetails);
+    // console.log(
+    //   buildVenueNameFromDetails(selectedVenueDetails?.current?.properties)
+    // );
+    // console.log(values.venue);
 
     //Check is user selected venue from our suggested list:
     if (
@@ -105,13 +105,13 @@ export default function AddEditEventForm() {
       buildVenueNameFromDetails(selectedVenueDetails.current.properties) ===
         values.venue
     ) {
-      console.log("Yes, User selected venue from our suggested list");
+      // console.log("Yes, User selected venue from our suggested list");
       values.venueMapDetails = buildVenueMapDetailsContent(
         selectedVenueDetails.current
       );
     }
 
-    console.log("Form submitted with values: ", values);
+    // console.log("Form submitted with values: ", values);
 
     if (!isAuthenticated) {
       alert("Please first log in to add or update events.");
@@ -140,11 +140,11 @@ export default function AddEditEventForm() {
       values.postedByUserId = userDetails.userId;
       values.postedByFullName = userDetails.fullName;
       const response = await postNewEvent(values);
-      console.log(!response);
+      // console.log(!response);
       if (!response) {
         showToast("Failed to add event. Please try again later.", ERROR);
       } else {
-        console.log("Else block running");
+        // console.log("Else block running");
         showToast(`${values?.eventName} event successfully added.`, SUCCESS);
         formik.resetForm();
         navigate("/");
@@ -168,7 +168,7 @@ export default function AddEditEventForm() {
       abortControllerRef.current = new AbortController();
 
       try {
-        console.log("Fetching suggestions for: ", query);
+        // console.log("Fetching suggestions for: ", query);
         const photonFeaturesSuggestions = await getSuggestedAddress(
           query,
           abortControllerRef.current.signal
@@ -181,12 +181,12 @@ export default function AddEditEventForm() {
               properties: item.properties,
             };
           });
-          console.log(locObj);
+          // console.log(locObj);
           setSuggestions(locObj);
         }
       } catch (error) {
         if (e.name === "AbortError") {
-          console.log("Old Request has been aborted for query: ", query);
+          // console.log("Old Request has been aborted for query: ", query);
         } else {
           console.error(
             "Error fetching suggested addresses from Photon API - debounceCallbackAutoCompletesAddressHandler():",
@@ -253,7 +253,7 @@ export default function AddEditEventForm() {
   });
 
   function onSuggestedListClickHandler(suggestion) {
-    console.log("Clicked onSuggestedListClickHandler()");
+    // console.log("Clicked onSuggestedListClickHandler()");
     formik.setFieldValue(
       "venue",
       buildVenueNameFromDetails(suggestion.properties)

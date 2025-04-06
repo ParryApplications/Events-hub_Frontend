@@ -38,9 +38,9 @@ export default function PastEventCard({ event }) {
         onError={(e) => {
           e.target.onerror = null; // Prevents from infinite loops
           e.target.src = eventPCardImage; // Set default image
-          console.log(
-            `INFO: Setting Default image as No image posted for eventId: ${event.eventId}`
-          );
+          // console.log(
+          //   `INFO: Setting Default image as No image posted for eventId: ${event.eventId}`
+          // );
         }}
       />
       <div className="d-flex flex-column flex-fill justify-content-center">

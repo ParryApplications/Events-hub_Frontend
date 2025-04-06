@@ -97,7 +97,7 @@ export default function EventCard({
         userDetails.userId,
         event.eventId
       );
-      console.log(updatedEvent);
+      // console.log(updatedEvent);
 
       updateEvent(updatedEvent);
     }
@@ -204,7 +204,7 @@ export default function EventCard({
             onError={(e) => {
               e.target.onerror = null; //Prevents from infinite loops
               e.target.src = eventCardImage; // Set default image
-              console.log(`No image posted for eventId: ${event.eventId}`);
+              // console.log(`No image posted for eventId: ${event.eventId}`);
             }}
           />
 

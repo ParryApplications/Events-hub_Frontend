@@ -35,7 +35,7 @@ export default function Navigation() {
         }}
         onConfirm={() => {
           setIsAuthenticated(false);
-          console.log("User Details before logout : ", userDetails);
+          // console.log("User Details before logout : ", userDetails);
           setUserDetails({});
           const isLogoutSuccess = logout(); //Remove Authorization headers
           navigate("/");
@@ -117,7 +117,7 @@ export default function Navigation() {
                   className="nav-item nav-link cursor-pointer"
                   data-bs-dismiss="offcanvas"
                   onClick={() => {
-                    console.log(faqDivRef);
+                    // console.log(faqDivRef);
                     setTimeout(() => {
                       faqDivRef.current?.scrollIntoView({
                         behavior: "smooth",

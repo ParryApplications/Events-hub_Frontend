@@ -22,7 +22,7 @@ const SECURITY_BASE_URL = "/security/api";
 export async function getAllEvents() {
   try {
     const response = await eventsHubApiClient.get(EVENT_BASE_URL);
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   } catch (err) {
     console.error(`Error while fetching all events: ${err.message}`);
@@ -71,7 +71,7 @@ export async function login(user) {
 export async function logout() {
   try {
     delete eventsHubApiClient.defaults.headers["Authorization"];
-    console.log("Logged out successfully");
+    // console.log("Logged out successfully");
     return true;
   } catch (err) {
     console.error(`Error while logging out: ${err.message}`);
@@ -90,7 +90,7 @@ export async function getAllEventsWithRsvpStatus(userId) {
     const response = await eventsHubApiClient.get(
       GET_ALL_EVENTS_WITH_RSVP.replace("{userId}", userId)
     );
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   } catch (err) {
     console.error(
@@ -123,7 +123,7 @@ export async function deletePastRsvpsByUserId(userId) {
     const response = await eventsHubApiClient.delete(
       REMOVE_PAST_RSVPS_BY_USERID.replace("{userId}", userId)
     );
-    console.log("Past RSVPs deleted successfully");
+    // console.log("Past RSVPs deleted successfully");
     return response;
   } catch (err) {
     console.error(`Error while deleting past RSVPs by userId: ${err.message}`);
@@ -141,7 +141,7 @@ export async function getMyPostedEventsByUserId(userId) {
     const response = await eventsHubApiClient.get(
       GET_MY_POSTED_EVENTS_BY_USERID.replace("{userId}", userId)
     );
-    console.log("My posted events fetched successfully");
+    // console.log("My posted events fetched successfully");
     // console.log(response.data);
     return response.data;
   } catch (err) {
@@ -180,7 +180,7 @@ export async function getUserDetailsByUserId(userId) {
 export async function postNewEvent(event) {
   try {
     const response = await eventsHubApiClient.post(EVENT_BASE_URL, event);
-    console.log("New event posted successfully");
+    // console.log("New event posted successfully");
     return response.data;
   } catch (err) {
     console.error(`Error while posting new event: ${err.message}`);
@@ -199,7 +199,7 @@ export async function updateEvent(event) {
       UPDATE_EVENT.replace("{eventId}", event.eventId),
       event
     );
-    console.log("Event updated successfully");
+    // console.log("Event updated successfully");
     return response.data;
   } catch (err) {
     console.error(`Error while updating event: ${err.message}`);
@@ -217,7 +217,7 @@ export async function deleteEventByEventId(eventId) {
     await eventsHubApiClient.delete(
       DELETE_EVENT_BY_EVENTID.replace("{eventId}", eventId)
     );
-    console.log("Event deleted successfully");
+    // console.log("Event deleted successfully");
     return true;
   } catch (err) {
     console.error(`Error while deleting event by eventId: ${err.message}`);
@@ -227,20 +227,20 @@ export async function deleteEventByEventId(eventId) {
 
 export async function updateVerificationOfAnEvent_ADMIN(userId, eventId) {
   try {
-    console.log(userId, eventId);
+    // console.log(userId, eventId);
 
     if (!userId || !eventId) {
       throw new Error("userId or eventId is missing");
     }
 
-    console.log(userId, eventId);
+    // console.log(userId, eventId);
 
     const response = await eventsHubApiClient.patch(
       `${ADMIN_BASE_URL}eventVerification/user/${userId}/event/${eventId}`
     );
     if (response?.data) {
-      console.log(response.data);
-      console.log("Event verification updated successfully");
+      // console.log(response.data);
+      // console.log("Event verification updated successfully");
       return response.data;
     }
   } catch (err) {
@@ -259,7 +259,7 @@ export async function getAnEvent(eventId) {
     const response = await eventsHubApiClient.get(
       `${EVENT_BASE_URL}/${eventId}`
     );
-    console.log(response.data);
+    // console.log(response.data);
     return response?.data;
   } catch (err) {
     console.error(`Error while fetching eventId-${eventId} : ${err.message}`);

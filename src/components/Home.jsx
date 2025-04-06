@@ -83,7 +83,7 @@ export default function Home() {
 
       setPastEventsList(pastEventsFiltered);
     } else {
-      console.log("No events found.");
+      // console.log("No events found.");
       showToast("No events found. Please come back later.", ERROR);
     }
   }
@@ -112,7 +112,7 @@ export default function Home() {
 
       setPastEventsList(pastRsvpsEventsFiltered);
     } else {
-      console.log("No events found.");
+      // console.log("No events found.");
       showToast("No events found. Please come back later.", ERROR);
     }
   }
