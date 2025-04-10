@@ -7,11 +7,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getSuggestedAddress } from "../apis/thirdPartyRestApis";
 import { debounce } from "lodash";
 import { ERROR, showToast, SUCCESS } from "../utility/CommonUtility";
+import ProgressBar from "./ProgressBar";
 
 export default function AddEditEventForm() {
   const isUpdateOperation = useLocation().pathname.includes("editEvent");
   const navigate = useNavigate();
   const [isAck, setIsAck] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const { userDetails, isAuthenticated } = useAuth();
   const [isImgTooltipOpen, setisImgTooltipOpen] = useState(false);
   const selectedVenueDetails = useRef(null);
@@ -92,6 +94,7 @@ export default function AddEditEventForm() {
     if (!isAck || isImgTooltipOpen) {
       return;
     }
+    setLoading(true);
 
     // console.log(selectedVenueDetails);
     // console.log(
@@ -116,6 +119,7 @@ export default function AddEditEventForm() {
     if (!isAuthenticated) {
       alert("Please first log in to add or update events.");
       navigate("/login");
+      setLoading(false);
       return;
     }
 
@@ -126,6 +130,7 @@ export default function AddEditEventForm() {
       };
       // console.log(reqBody);
       const response = await updateEvent(reqBody);
+      setLoading(false);
       if (!response) {
         showToast("Event update failed. Please try again later.", ERROR);
       } else {
@@ -140,7 +145,7 @@ export default function AddEditEventForm() {
       values.postedByUserId = userDetails.userId;
       values.postedByFullName = userDetails.fullName;
       const response = await postNewEvent(values);
-      // console.log(!response);
+      setLoading(false);
       if (!response) {
         showToast("Failed to add event. Please try again later.", ERROR);
       } else {
@@ -264,192 +269,198 @@ export default function AddEditEventForm() {
 
   return (
     // Form to add or edit an event
-    <div className="container card align-items-center justify-content-center bg-app-theme border border-3">
-      <h2 className="pt-2">{title}</h2>
-      {/* Form fields */}
-      <form
-        noValidate
-        className="row col-12 col-lg-5 gy-2 p-5"
-        onSubmit={formik.handleSubmit}
-      >
-        <div>
-          <label htmlFor="eventNameFieldId" className="form-label">
-            Event Name*
-          </label>
-          <input
-            id="eventNameFieldId"
-            type="text"
-            className={`form-control ${
-              formik.touched.eventName && formik.errors.eventName
-                ? "is-invalid"
-                : ""
-            } shadow-sm`}
-            name="eventName"
-            value={formik.values.eventName}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-          />
+    <>
+      {isLoading && <ProgressBar />}
 
-          <span className="invalid-feedback">{formik.errors.eventName}</span>
-        </div>
-
-        <div className="relative-div">
-          <label htmlFor="venueFieldId" className="form-label">
-            Venue*
-          </label>
-
-          <input
-            id="venueFieldId"
-            type="text"
-            name="venue"
-            placeholder="e.g. Street, City, Pincode"
-            className={`form-control ${
-              formik.touched.venue && formik.errors.venue ? "is-invalid" : ""
-            } shadow-sm`}
-            value={formik.values.venue}
-            onBlur={formik.handleBlur}
-            onChange={onVenueChangeHandler}
-          />
-
-          {suggestions.length > 0 && (
-            <ul className="autocomplete-dropdown list-group">
-              {suggestions.map((suggestion) => (
-                <li
-                  key={suggestion.properties.osm_id + uniqueIncrementNum++}
-                  className="autocomplete-item list-group-item list-group-item-action"
-                  onClick={() => onSuggestedListClickHandler(suggestion)}
-                >
-                  {buildVenueNameFromDetails(suggestion.properties)}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <span className="invalid-feedback">{formik.errors.venue}</span>
-        </div>
-
-        <div>
-          <label htmlFor="eventDateFieldId" className="form-label">
-            Event Date-Time*
-          </label>
-          <input
-            id="eventDateFieldId"
-            type="datetime-local"
-            name="eventDate"
-            className={`form-control ${
-              formik.touched.eventDate && formik.errors.eventDate
-                ? "is-invalid"
-                : ""
-            } shadow-sm`}
-            value={formik.values.eventDate}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-          />
-
-          <span className="invalid-feedback">{formik.errors.eventDate}</span>
-        </div>
-
-        <div>
-          <label htmlFor="imgUrlFieldId" className="form-label">
-            Image URL
-          </label>
-
-          <p
-            onClick={() => setisImgTooltipOpen((prevVal) => !prevVal)}
-            className="ms-2 btn btn-secondary px-2 py-0 rounded-pill mb-1"
-          >
-            i
-          </p>
-
-          {/* Tooltip Dialog */}
-          {isImgTooltipOpen && (
-            <div className="d-flex fixed-bottom flex-column position-absolute mt-2 w-90 bg-white shadow-lg rounded p-3 border border-secondary">
-              <p className="text-gray-700">
-                Steps to Upload an Event Image URL:
-                <ol>
-                  <li>Search for a relevant event image online.</li>
-                  <li>Click on the selected image.</li>
-                  <li>
-                    Right-click (or tap and hold) on the image and choose{" "}
-                    <strong>Copy image address</strong>.
-                  </li>
-                  <li>Paste the copied link in the provided field.</li>
-                </ol>
-              </p>
-              <button
-                onClick={() => setisImgTooltipOpen(false)}
-                className="btn btn-danger btn-sm "
-              >
-                Close
-              </button>
-            </div>
-          )}
-
-          <input
-            id="imgUrlFieldId"
-            type="text"
-            name="imageUrl"
-            placeholder="http://example.com"
-            className={`form-control ${
-              formik.touched.imageUrl && formik.errors.imageUrl
-                ? "is-invalid"
-                : formik.values.imageUrl.trim() !== ""
-                ? "is-valid"
-                : ""
-            } shadow-sm`}
-            value={formik.values.imageUrl}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-          />
-
-          <span className="invalid-feedback">{formik.errors.imageUrl}</span>
-        </div>
-
-        <div>
-          <label htmlFor="descriptionFieldId" className="form-label">
-            Additional Information
-          </label>
-          <textarea
-            id="descriptionFieldId"
-            type="text"
-            name="description"
-            placeholder="What the event is about and where tickets can be booked (if applicable)."
-            className={`form-control ${
-              formik.touched.description && formik.errors.description
-                ? "is-invalid"
-                : ""
-            } shadow-sm`}
-            value={formik.values.description}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-          />
-
-          <span className="invalid-feedback">{formik.errors.description}</span>
-        </div>
-
-        <div className="mt-3 d-flex p-2 align-items-center justify-content-center gap-3 border">
-          <input
-            type="checkbox"
-            id="ackCheckbox"
-            onChange={() => {
-              setIsAck((prevVal) => !prevVal);
-            }}
-          />
-          <label htmlFor="ackCheckbox" className="mb-0 text-center">
-            I accept the <Link to="/">Terms & Conditions</Link>. Uploading
-            inappropriate content, including nudity or false information, may
-            result in legal action.
-          </label>
-        </div>
-
-        <button
-          className="mt-5 btn btn-primary border border-2  shadow-lg"
-          disabled={!isAck || isImgTooltipOpen || formik.isSubmitting}
-          type="submit"
+      <div className="container card align-items-center justify-content-center bg-app-theme border border-3">
+        <h2 className="pt-2">{title}</h2>
+        {/* Form fields */}
+        <form
+          noValidate
+          className="row col-12 col-lg-5 gy-2 p-5"
+          onSubmit={formik.handleSubmit}
         >
-          {!isUpdateOperation ? "Post" : "Modify"}
-        </button>
-      </form>
-    </div>
+          <div>
+            <label htmlFor="eventNameFieldId" className="form-label">
+              Event Name*
+            </label>
+            <input
+              id="eventNameFieldId"
+              type="text"
+              className={`form-control ${
+                formik.touched.eventName && formik.errors.eventName
+                  ? "is-invalid"
+                  : ""
+              } shadow-sm`}
+              name="eventName"
+              value={formik.values.eventName}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+            />
+
+            <span className="invalid-feedback">{formik.errors.eventName}</span>
+          </div>
+
+          <div className="relative-div">
+            <label htmlFor="venueFieldId" className="form-label">
+              Venue*
+            </label>
+
+            <input
+              id="venueFieldId"
+              type="text"
+              name="venue"
+              placeholder="e.g. Street, City, Pincode"
+              className={`form-control ${
+                formik.touched.venue && formik.errors.venue ? "is-invalid" : ""
+              } shadow-sm`}
+              value={formik.values.venue}
+              onBlur={formik.handleBlur}
+              onChange={onVenueChangeHandler}
+            />
+
+            {suggestions.length > 0 && (
+              <ul className="autocomplete-dropdown list-group">
+                {suggestions.map((suggestion) => (
+                  <li
+                    key={suggestion.properties.osm_id + uniqueIncrementNum++}
+                    className="autocomplete-item list-group-item list-group-item-action"
+                    onClick={() => onSuggestedListClickHandler(suggestion)}
+                  >
+                    {buildVenueNameFromDetails(suggestion.properties)}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <span className="invalid-feedback">{formik.errors.venue}</span>
+          </div>
+
+          <div>
+            <label htmlFor="eventDateFieldId" className="form-label">
+              Event Date-Time*
+            </label>
+            <input
+              id="eventDateFieldId"
+              type="datetime-local"
+              name="eventDate"
+              className={`form-control ${
+                formik.touched.eventDate && formik.errors.eventDate
+                  ? "is-invalid"
+                  : ""
+              } shadow-sm`}
+              value={formik.values.eventDate}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+            />
+
+            <span className="invalid-feedback">{formik.errors.eventDate}</span>
+          </div>
+
+          <div>
+            <label htmlFor="imgUrlFieldId" className="form-label">
+              Image URL
+            </label>
+
+            <p
+              onClick={() => setisImgTooltipOpen((prevVal) => !prevVal)}
+              className="ms-2 btn btn-secondary px-2 py-0 rounded-pill mb-1"
+            >
+              i
+            </p>
+
+            {/* Tooltip Dialog */}
+            {isImgTooltipOpen && (
+              <div className="d-flex fixed-bottom flex-column position-absolute mt-2 w-90 bg-white shadow-lg rounded p-3 border border-secondary">
+                <p className="text-gray-700">
+                  Steps to Upload an Event Image URL:
+                  <ol>
+                    <li>Search for a relevant event image online.</li>
+                    <li>Click on the selected image.</li>
+                    <li>
+                      Right-click (or tap and hold) on the image and choose{" "}
+                      <strong>Copy image address</strong>.
+                    </li>
+                    <li>Paste the copied link in the provided field.</li>
+                  </ol>
+                </p>
+                <button
+                  onClick={() => setisImgTooltipOpen(false)}
+                  className="btn btn-danger btn-sm "
+                >
+                  Close
+                </button>
+              </div>
+            )}
+
+            <input
+              id="imgUrlFieldId"
+              type="text"
+              name="imageUrl"
+              placeholder="https://example.com"
+              className={`form-control ${
+                formik.touched.imageUrl && formik.errors.imageUrl
+                  ? "is-invalid"
+                  : formik.values.imageUrl.trim() !== ""
+                  ? "is-valid"
+                  : ""
+              } shadow-sm`}
+              value={formik.values.imageUrl}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+            />
+
+            <span className="invalid-feedback">{formik.errors.imageUrl}</span>
+          </div>
+
+          <div>
+            <label htmlFor="descriptionFieldId" className="form-label">
+              Additional Information
+            </label>
+            <textarea
+              id="descriptionFieldId"
+              type="text"
+              name="description"
+              placeholder="What the event is about and where tickets can be booked (if applicable)."
+              className={`form-control ${
+                formik.touched.description && formik.errors.description
+                  ? "is-invalid"
+                  : ""
+              } shadow-sm`}
+              value={formik.values.description}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+            />
+
+            <span className="invalid-feedback">
+              {formik.errors.description}
+            </span>
+          </div>
+
+          <div className="mt-3 d-flex p-2 align-items-center justify-content-center gap-3 border">
+            <input
+              type="checkbox"
+              id="ackCheckbox"
+              onChange={() => {
+                setIsAck((prevVal) => !prevVal);
+              }}
+            />
+            <label htmlFor="ackCheckbox" className="mb-0 text-center">
+              I accept the <Link to="/">Terms & Conditions</Link>. Uploading
+              inappropriate content, including nudity or false information, may
+              result in legal action.
+            </label>
+          </div>
+
+          <button
+            className="mt-5 btn btn-primary border border-2  shadow-lg"
+            disabled={!isAck || isImgTooltipOpen || formik.isSubmitting}
+            type="submit"
+          >
+            {!isUpdateOperation ? "Post" : "Modify"}
+          </button>
+        </form>
+      </div>
+    </>
   );
 }

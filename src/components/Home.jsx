@@ -23,6 +23,7 @@ import Typed from "typed.js";
 import { MdFilterList } from "react-icons/md";
 import SortByContextMenu from "./SortByContextMenu";
 import { Helmet } from "react-helmet-async";
+import ProgressBar from "./ProgressBar";
 
 <Helmet>
   <title>EventsHub | Explore Events Near You</title>
@@ -41,6 +42,7 @@ import { Helmet } from "react-helmet-async";
 export default function Home() {
   const { userDetails, isAuthenticated } = useAuth();
   const [eventList, setEventList] = useState([]);
+  const [isLoading, setLoading] = useState(true);
   const [pastEventsList, setPastEventsList] = useState([]);
   const [hasSubscribedEvent, setHasSubscribedEvent] = useState(false);
   const [hasPastEvent, setHasPastEvent] = useState(false);
@@ -82,6 +84,7 @@ export default function Home() {
       );
 
       setPastEventsList(pastEventsFiltered);
+      setLoading(false);
     } else {
       // console.log("No events found.");
       showToast("No events found. Please come back later.", ERROR);
@@ -111,12 +114,12 @@ export default function Home() {
       );
 
       setPastEventsList(pastRsvpsEventsFiltered);
+      setLoading(false);
     } else {
       // console.log("No events found.");
       showToast("No events found. Please come back later.", ERROR);
     }
   }
-
   useEffect(() => {
     //Quotes:
     const typedQuotes = new Typed("#typed-quotes-h3", {
@@ -270,22 +273,36 @@ export default function Home() {
 
   return (
     <>
+      {isLoading ? (
+        <ProgressBar />
+      ) : (
+        eventList.length === 0 && (
+          <div className="text-center">No events found</div>
+        )
+      )}
+
       {sortByContextMenu?.visible && (
         <SortByContextMenu
           x={sortByContextMenu.x}
           y={sortByContextMenu.y}
           onClose={handleSortByContextMenuClose}
           onSortingAlphabetiallyFilter={() => {
+            // setLoading(true);
             setEventList(getSortedEventsByAlphabets(eventList));
             handleSortByContextMenuClose();
+            // setLoading(false);
           }}
           onSortingEventDateAscFilter={() => {
+            // setLoading(true);
             setEventList(getSortedEventsByEventDateNewToOld(eventList));
             handleSortByContextMenuClose();
+            // setLoading(false);
           }}
           onSortingEventDateDscFilter={() => {
+            // setLoading(true);
             setEventList(getSortedEventsByEventDateOldToNew(eventList));
             handleSortByContextMenuClose();
+            // setLoading(false);
           }}
         />
       )}

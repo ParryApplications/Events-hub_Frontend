@@ -135,7 +135,7 @@ export default function Navigation() {
                 onClick={clearFaqDivRef}
               >
                 <NavLink className="nav-link" to={"/about"}>
-                  About
+                  About Us
                 </NavLink>
               </li>
 
