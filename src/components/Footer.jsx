@@ -41,7 +41,7 @@ export default function Footer() {
         </li> */}
         <li className="nav-item">
           <Link to="/about" className="nav-link px-2 text-muted">
-            About
+            About Us
           </Link>
         </li>
       </ul>

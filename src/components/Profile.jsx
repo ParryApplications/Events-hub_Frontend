@@ -16,6 +16,7 @@ import {
 } from "../utility/CommonUtility";
 import { MdFilterList } from "react-icons/md";
 import SortByContextMenu from "./SortByContextMenu";
+import ProgressBar from "./ProgressBar";
 
 export default function Profile() {
   const [sortByContextMenu, setSortByContextMenu] = useState({
@@ -26,6 +27,7 @@ export default function Profile() {
   const { userDetails, isAuthenticated, setUserDetails, setIsAuthenticated } =
     useAuth();
   const [myEvents, setMyEvents] = useState([]);
+  const [isLoading, setLoading] = useState(true);
   const [isProfileTabActive, setProfileTabActive] = useState(true);
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -52,6 +54,7 @@ export default function Profile() {
       const eventsList = await getMyPostedEventsByUserId(userDetails?.userId);
       if (eventsList) {
         setMyEvents(eventsList);
+        setLoading(false);
       }
     };
     loadMyEvents();
@@ -114,6 +117,7 @@ export default function Profile() {
           <PostedEventsContent
             myEvents={myEvents}
             setMyEvents={setMyEvents}
+            isLoading={isLoading}
             isAuthenticated={isAuthenticated}
             userDetails={userDetails}
             sortByContextMenu={sortByContextMenu}
@@ -163,7 +167,7 @@ const ProfileContent = ({
         width={200}
       />
 
-      <h4 className="my-1">Welcome {userDetails.fullName}</h4>
+      <h4 className="my-1 text-center">Welcome {userDetails.fullName}</h4>
 
       <div className="d-flex flex-column gap-3 mt-4">
         <div>
@@ -239,6 +243,7 @@ const ProfileContent = ({
 
 const PostedEventsContent = ({
   myEvents,
+  isLoading,
   setMyEvents,
   isAuthenticated,
   userDetails,
@@ -255,7 +260,7 @@ const PostedEventsContent = ({
       prevEvents.filter((event) => event.eventId !== deletedEventId)
     );
   }
-
+  console.log(myEvents);
   /**
    * Method will update an event under the eventList state object
    * @param updatedEvent
@@ -318,6 +323,14 @@ const PostedEventsContent = ({
 
   return (
     <>
+      {isLoading ? (
+        <ProgressBar />
+      ) : (
+        myEvents.length === 0 && (
+          <div className="text-center">No events found</div>
+        )
+      )}
+
       {sortByContextMenu?.visible && (
         <SortByContextMenu
           x={sortByContextMenu.x}

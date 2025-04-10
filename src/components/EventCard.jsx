@@ -264,14 +264,13 @@ export default function EventCard({
             <div className="hover-message">
               {event?.verified === true ? (
                 <>
-                  Thanks{" "}
                   {event.postedByFullName.length > 11
                     ? event.postedByFullName.split(" ")[0]
                     : event.postedByFullName}
                   , appreciate your authentic post!
                 </>
               ) : (
-                <>Posted by {event.postedByFullName}, Not yet verified!</>
+                <>By {event.postedByFullName}, Not yet verified!</>
               )}
             </div>
           )}
