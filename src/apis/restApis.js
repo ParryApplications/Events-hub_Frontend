@@ -1,15 +1,23 @@
 import { BACKEND_BASE_URL, eventsHubApiClient } from "./CommonApiUtil";
 
+//constants:
+const defaultIssueResponseObj = {
+  success: false,
+  mmessage: "Something went wrong. Please try again later",
+  data: null,
+};
+const HTUA = "htua"; //Auth key for local storage (in reverse)
+
 //API URL CONSTANTS:
 const EVENT_BASE_URL = "/event/api";
-const UPDATE_EVENT = EVENT_BASE_URL + "/{eventId}";
+const UPDATE_EVENT = EVENT_BASE_URL + "/{eventId}/user/{userId}";
 const DELETE_EVENT_BY_EVENTID = EVENT_BASE_URL + "/{eventId}";
 const POST_SAVE_USER = "/user/api";
 const POST_USER_LOGIN = "/user/api/login";
 const GET_ALL_EVENTS_WITH_RSVP = "/event/api/rsvp/user/{userId}";
 const PUT_RSVP_BY_EVENTID_USERID = "/rsvp/api";
-const REMOVE_PAST_RSVPS_BY_USERID = "/rsvp/api/removePastEvents/{userId}";
-const GET_MY_POSTED_EVENTS_BY_USERID = "/event/api/user/{userId}";
+const GET_MY_POSTED_RSVP_EVENTS_BY_USERID =
+  "/event/api/rsvp/user/{userId}/posted-events";
 const GET_USER_DETAILS_BY_USERID = "/user/api/{userId}";
 const ADMIN_BASE_URL = "/admin/api/";
 const SECURITY_BASE_URL = "/security/api";
@@ -22,11 +30,13 @@ const SECURITY_BASE_URL = "/security/api";
 export async function getAllEvents() {
   try {
     const response = await eventsHubApiClient.get(EVENT_BASE_URL);
-    // console.log(response.data);
+    // console.log(response, response.data);
     return response.data;
   } catch (err) {
-    console.error(`Error while fetching all events: ${err.message}`);
+    console.error(err.response.data.message);
+    return err.response.data;
   }
+  return defaultIssueResponseObj;
 }
 
 /**
@@ -37,14 +47,12 @@ export async function getAllEvents() {
 export async function saveUser(user) {
   try {
     const savedUser = await eventsHubApiClient.post(POST_SAVE_USER, user);
-    // console.log(savedUser.data);
-    if (savedUser && savedUser.data) {
-      return true;
-    }
+    return savedUser.data;
   } catch (err) {
-    console.error(`Error while saving user: ${err.message}`);
+    console.error(err.response.data.message);
+    return err.response.data;
   }
-  return false;
+  return defaultIssueResponseObj;
 }
 /**
  * If User is valid, Method will return the user details fetched by username
@@ -55,14 +63,21 @@ export async function saveUser(user) {
 export async function login(user) {
   try {
     const credentials = "Basic " + btoa(`${user.username}:${user.password}`);
-    eventsHubApiClient.defaults.headers["Authorization"] = credentials;
+
+    if (localStorage.getItem(HTUA))
+      eventsHubApiClient.defaults.headers["Authorization"] = credentials;
+
     const response = await eventsHubApiClient.post(POST_USER_LOGIN, user);
-    // console.log(response.data);
+    localStorage.setItem(HTUA, credentials);
     return response.data;
   } catch (err) {
-    console.error(`Error while validating user: ${err.message}`);
-    return false;
+    return {
+      success: false,
+      message: err?.response?.data?.message || "Invalid credentials!",
+      data: null,
+    };
   }
+  return defaultIssueResponseObj;
 }
 
 /**
@@ -70,8 +85,8 @@ export async function login(user) {
  */
 export async function logout() {
   try {
+    localStorage.removeItem(HTUA);
     delete eventsHubApiClient.defaults.headers["Authorization"];
-    // console.log("Logged out successfully");
     return true;
   } catch (err) {
     console.error(`Error while logging out: ${err.message}`);
@@ -90,13 +105,12 @@ export async function getAllEventsWithRsvpStatus(userId) {
     const response = await eventsHubApiClient.get(
       GET_ALL_EVENTS_WITH_RSVP.replace("{userId}", userId)
     );
-    // console.log(response.data);
     return response.data;
   } catch (err) {
-    console.error(
-      `Error while fetching whole list of events with RSVP status: ${err.message}`
-    );
+    console.error(err.response.data.message);
+    return err.response.data;
   }
+  return defaultIssueResponseObj;
 }
 
 /**
@@ -105,30 +119,16 @@ export async function getAllEventsWithRsvpStatus(userId) {
  */
 export async function toggleRsvpStatus(rsvp) {
   try {
-    await eventsHubApiClient.put(PUT_RSVP_BY_EVENTID_USERID, rsvp);
-    return 1;
-  } catch (err) {
-    console.error(`Error while toggling RSVP status: ${err.message}`);
-  }
-  return -1;
-}
-
-/**
- * Method will delete all past RSVPs for a particular user and eventId
- * @param {*} userId
- * @returns
- */
-export async function deletePastRsvpsByUserId(userId) {
-  try {
-    const response = await eventsHubApiClient.delete(
-      REMOVE_PAST_RSVPS_BY_USERID.replace("{userId}", userId)
+    const response = await eventsHubApiClient.put(
+      PUT_RSVP_BY_EVENTID_USERID,
+      rsvp
     );
-    // console.log("Past RSVPs deleted successfully");
-    return response;
+    return response.data;
   } catch (err) {
-    console.error(`Error while deleting past RSVPs by userId: ${err.message}`);
-    return false;
+    console.error(err.response.data.message);
+    return err.response.data;
   }
+  return defaultIssueResponseObj;
 }
 
 /**
@@ -136,40 +136,17 @@ export async function deletePastRsvpsByUserId(userId) {
  * @param {*} userId
  * @returns
  */
-export async function getMyPostedEventsByUserId(userId) {
+export async function getMyPostedRsvpsEventsByUserId(userId) {
   try {
     const response = await eventsHubApiClient.get(
-      GET_MY_POSTED_EVENTS_BY_USERID.replace("{userId}", userId)
+      GET_MY_POSTED_RSVP_EVENTS_BY_USERID.replace("{userId}", userId)
     );
-    // console.log("My posted events fetched successfully");
-    // console.log(response.data);
     return response.data;
   } catch (err) {
-    console.error(
-      `Error while fetching my posted events by userId: ${err.message}`
-    );
-    return undefined;
+    console.error(err.response.data.message);
+    return err.response.data;
   }
-}
-
-/**
- * Method will return userDetails by UserId
- * @param {*} userId
- * @returns
- */
-export async function getUserDetailsByUserId(userId) {
-  try {
-    const response = await eventsHubApiClient.get(
-      GET_USER_DETAILS_BY_USERID.replace("{userId}", userId)
-    );
-    // console.log(response.data);
-    return response.data;
-  } catch (err) {
-    console.error(
-      `Error while fetching user details by userId: ${err.message}`
-    );
-    return undefined;
-  }
+  return defaultIssueResponseObj;
 }
 
 /**
@@ -180,12 +157,12 @@ export async function getUserDetailsByUserId(userId) {
 export async function postNewEvent(event) {
   try {
     const response = await eventsHubApiClient.post(EVENT_BASE_URL, event);
-    // console.log("New event posted successfully");
     return response.data;
   } catch (err) {
-    console.error(`Error while posting new event: ${err.message}`);
-    return false;
+    console.error(err.response.data.message);
+    return err.response.data;
   }
+  return defaultIssueResponseObj;
 }
 
 /**
@@ -193,18 +170,21 @@ export async function postNewEvent(event) {
  * @param {*} event
  * @returns
  */
-export async function updateEvent(event) {
+export async function updateEvent(event, userId) {
   try {
     const response = await eventsHubApiClient.put(
-      UPDATE_EVENT.replace("{eventId}", event.eventId),
+      UPDATE_EVENT.replace("{eventId}", event.eventId).replace(
+        "{userId}",
+        userId
+      ),
       event
     );
-    // console.log("Event updated successfully");
     return response.data;
   } catch (err) {
-    console.error(`Error while updating event: ${err.message}`);
-    return false;
+    console.error(err.response.data.message);
+    return err.response.data;
   }
+  return defaultIssueResponseObj;
 }
 
 /**
@@ -214,39 +194,28 @@ export async function updateEvent(event) {
  */
 export async function deleteEventByEventId(eventId) {
   try {
-    await eventsHubApiClient.delete(
+    const response = await eventsHubApiClient.delete(
       DELETE_EVENT_BY_EVENTID.replace("{eventId}", eventId)
     );
-    // console.log("Event deleted successfully");
-    return true;
+    return response.data;
   } catch (err) {
-    console.error(`Error while deleting event by eventId: ${err.message}`);
-    return false;
+    console.error(err.response.data.message);
+    return err.response.data;
   }
+  return defaultIssueResponseObj;
 }
 
 export async function updateVerificationOfAnEvent_ADMIN(userId, eventId) {
   try {
-    // console.log(userId, eventId);
-
-    if (!userId || !eventId) {
-      throw new Error("userId or eventId is missing");
-    }
-
-    // console.log(userId, eventId);
-
     const response = await eventsHubApiClient.patch(
       `${ADMIN_BASE_URL}eventVerification/user/${userId}/event/${eventId}`
     );
-    if (response?.data) {
-      // console.log(response.data);
-      // console.log("Event verification updated successfully");
-      return response.data;
-    }
+    return response.data;
   } catch (err) {
-    console.error(`Error while updating event verification: ${err.message}`);
+    console.error(err.response.data.message);
+    return err.response.data;
   }
-  return undefined;
+  return defaultIssueResponseObj;
 }
 
 /**
@@ -259,12 +228,12 @@ export async function getAnEvent(eventId) {
     const response = await eventsHubApiClient.get(
       `${EVENT_BASE_URL}/${eventId}`
     );
-    // console.log(response.data);
-    return response?.data;
+    return response.data;
   } catch (err) {
-    console.error(`Error while fetching eventId-${eventId} : ${err.message}`);
+    console.error(err.response.data.message);
+    return err.response.data;
   }
-  return null;
+  return defaultIssueResponseObj;
 }
 
 export const verifyEmailApi = async (token, userId) => {
@@ -276,10 +245,10 @@ export const verifyEmailApi = async (token, userId) => {
         userId: userId,
       }
     );
-    // console.log(response.data);
     return response.data;
   } catch (err) {
-    console.error(`Error while verifying email: ${err.message}`);
-    return undefined;
+    console.error(err.response.data.message);
+    return err.response.data;
   }
+  return defaultIssueResponseObj;
 };

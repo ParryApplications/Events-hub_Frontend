@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
 import EventCard from "./EventCard";
-import { getMyPostedEventsByUserId, logout } from "../apis/restApis";
+import { getMyPostedRsvpsEventsByUserId, logout } from "../apis/restApis";
 import profileImg from "../assets/neutral-profile-img.png";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "./ConfirmationDialog";
@@ -42,19 +42,16 @@ export default function Profile() {
       navigate("/");
     }
 
-    // if (isNoteDone && isNoteDone?.current === false) {
-    // showToast(
-    //   "Currently users are not allowed to modify their profile.",
-    //   ERROR
-    // );
-    //   isNoteDone.current = true;
-    // }
-
     const loadMyEvents = async () => {
-      const eventsList = await getMyPostedEventsByUserId(userDetails?.userId);
-      if (eventsList) {
-        setMyEvents(eventsList);
+      const eventsList = await getMyPostedRsvpsEventsByUserId(
+        userDetails?.userId
+      );
+
+      if (eventsList.success) {
+        setMyEvents(eventsList.data);
         setLoading(false);
+      } else {
+        showToast(eventsList.message);
       }
     };
     loadMyEvents();
@@ -286,32 +283,20 @@ const PostedEventsContent = ({
       return;
     }
 
-    const resultNum = await onRsvpButtonClick(
+    const rsvpResult = await onRsvpButtonClick(
       userDetails.userId,
       event.eventId,
-      event.eventDate
+      event.eventDate,
+      event.verified
     );
 
-    // console.log(resultNum, event?.status);
-
-    if (resultNum === 1 && !event?.status) {
-      showToast(
-        `You've successfully subscribed to ${event.eventName} event.`,
-        SUCCESS
-      );
-    } else if (resultNum === 1 && event?.status) {
-      showToast(
-        `You've successfully unsubscribed to ${event.eventName} event.`,
-        SUCCESS
-      );
+    if (rsvpResult.success) {
+      showToast(rsvpResult.message, SUCCESS);
+      event.status = !event.status;
+      updateEventList(event);
     } else {
-      showToast(
-        `Something went wrong while subscribing to ${event.eventName} event.`,
-        ERROR
-      );
+      showToast(rsvpResult.message, ERROR);
     }
-    event.status = !event.status;
-    updateEventList(event);
   }
 
   /**

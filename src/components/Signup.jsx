@@ -26,19 +26,12 @@ export default function Signup() {
   //Form Submission Handler:
   const submitFormHandler = async (values) => {
     setLoading(true);
-    //Submit form data to the server
-    // console.log("Form submitting with Values: ", values);
     const response = await saveUser(values);
 
     setLoading(false);
 
-    if (response)
-      showToast(
-        "A verification email has been sent. Please check your inbox.",
-        SUCCESS
-      );
-    else
-      showToast("We're experiencing issues. Please try again shortly.", ERROR);
+    if (response.success && response.data) showToast(response.message, SUCCESS);
+    else showToast(response.message, ERROR);
 
     formik.resetForm();
     navigate("/login");

@@ -75,13 +75,15 @@ export default function EventCard({
       "https://www.google.com/maps/search/?api=1&query=";
 
     try {
-      const venueExpression = event.venue
-        .split(",")
-        .map((word) => word.trim().replace(/\s+/g, "+"))
-        .join(",");
-
-      // console.log(BASE_MAP_QUERY_URL + venueExpression);
-      return BASE_MAP_QUERY_URL + venueExpression;
+      if (event.venueMapDetails && event.venue) {
+        const venueExpression = event.venue
+          .split(",")
+          .map((word) => word.trim().replace(/\s+/g, "+"))
+          .join(",");
+        return BASE_MAP_QUERY_URL + venueExpression;
+      } else {
+        return "https://www.google.com/maps";
+      }
     } catch (e) {
       console.error("Error building map URL for event: ", event.eventId, e);
       return "https://www.google.com/maps";
@@ -92,14 +94,14 @@ export default function EventCard({
 
   const onDoubleClickEventCardHandler = async () => {
     if (isAuthenticated && userDetails.role === "ADMIN") {
-      alert("Going to toggle the verification of this event");
       const updatedEvent = await updateVerificationOfAnEvent_ADMIN(
         userDetails.userId,
         event.eventId
       );
-      // console.log(updatedEvent);
-
-      updateEvent(updatedEvent);
+      if (updatedEvent.success && updatedEvent.data) {
+        showToast(updatedEvent.message, SUCCESS);
+        updateEvent(updatedEvent.data);
+      } else showToast(updatedEvent.message, ERROR);
     }
   };
 
@@ -137,21 +139,17 @@ export default function EventCard({
       {isDialogOpen && (
         <ConfirmationDialog
           isOpen={isDialogOpen}
-          onConfirm={() => {
+          onConfirm={async () => {
             if (isEditIconClicked.current) {
               navigate("/editEvent", { state: { event } });
             } else {
               //Delete From Backend
-              if (deleteEventByEventId(event.eventId)) {
-                showToast(
-                  `${event.eventName} event deleted successfully`,
-                  SUCCESS
-                );
+              const response = await deleteEventByEventId(event.eventId);
+              console.log(response);
+              if (response.success) {
+                showToast(response.message, SUCCESS);
               } else {
-                showToast(
-                  `Something went wrong while deleting ${event.eventName} event`,
-                  ERROR
-                );
+                showToast(response.message, ERROR);
               }
               deleteEventFromList(event.eventId); //UI List Update
             }

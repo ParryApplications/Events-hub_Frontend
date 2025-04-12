@@ -1,10 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  ERROR,
-  getGreeting,
-  showToast,
-  SUCCESS,
-} from "../utility/CommonUtility";
+import { ERROR, showToast, SUCCESS } from "../utility/CommonUtility";
 import { getAnEvent } from "../apis/restApis";
 import { useEffect, useState } from "react";
 import EventCard from "./EventCard";
@@ -17,33 +12,33 @@ export default function SingleEvent() {
   const [event, setEvent] = useState(null);
   const { isAuthenticated } = useAuth();
 
+  /**
+   * Method will remove an deleted event from the eventList based on the eventId.
+   * This will re-render the Home.jsx component.
+   * @param {*} deletedEventId
+   */
+  function deleteEventFromList(deletedEventId) {
+    setEvent(null);
+    navigate("/");
+  }
+
   useEffect(() => {
     if (eventId) {
       getAnEvent(eventId)
         .then((res) => {
-          // console.log(res);
-          if (res == null || res == "") {
-            showToast(
-              "Oops! The URL appears to be incorrect or no longer valid. Redirecting to the Home page.",
-              ERROR
-            );
+          if (!res.success) {
+            showToast(res.message, ERROR);
             navigate("/");
-          } else setEvent(res);
+          } else setEvent(res.data);
         })
         .catch((err) => {
-          console.error("Error while fetching event details: ", err);
+          console.error("Error while fetching single event details: ", err);
           showToast(
             "Oops! The URL appears to be incorrect or no longer valid. Redirecting to the Home page.",
             ERROR
           );
           navigate("/");
         });
-    }
-
-    if (!isAuthenticated) {
-      setTimeout(() => {
-        showToast(`Hi, ${getGreeting()}`, SUCCESS);
-      }, 1500);
     }
   }, [eventId]);
 
@@ -53,6 +48,7 @@ export default function SingleEvent() {
         <EventCard
           key={eventId}
           event={event}
+          deleteEventFromList={deleteEventFromList}
           customRef={(el) => {
             if (event.verified === true) {
               el?.classList.add("verified-event");

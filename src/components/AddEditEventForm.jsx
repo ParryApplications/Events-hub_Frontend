@@ -128,16 +128,12 @@ export default function AddEditEventForm() {
         ...event,
         ...values,
       };
-      // console.log(reqBody);
-      const response = await updateEvent(reqBody);
+      const response = await updateEvent(reqBody, userDetails.userId);
       setLoading(false);
-      if (!response) {
-        showToast("Event update failed. Please try again later.", ERROR);
+      if (!response.success) {
+        showToast(response.message, ERROR);
       } else {
-        showToast(
-          `${reqBody?.eventName} event has been updated successfully.`,
-          SUCCESS
-        );
+        showToast(response.message, SUCCESS);
         formik.resetForm();
         navigate("/");
       }
@@ -146,11 +142,10 @@ export default function AddEditEventForm() {
       values.postedByFullName = userDetails.fullName;
       const response = await postNewEvent(values);
       setLoading(false);
-      if (!response) {
-        showToast("Failed to add event. Please try again later.", ERROR);
+      if (!response.success) {
+        showToast(response.message, ERROR);
       } else {
-        // console.log("Else block running");
-        showToast(`${values?.eventName} event successfully added.`, SUCCESS);
+        showToast(response.message, SUCCESS);
         formik.resetForm();
         navigate("/");
       }

@@ -19,6 +19,10 @@ import SingleEvent from "./components/SingleEvent.jsx";
 import About from "./components/About.jsx";
 import VerificationPage from "./components/VerificationPage.jsx";
 import { HelmetProvider } from "react-helmet-async";
+import TermsAndConditions from "./components/TC.jsx";
+import { ErrorFallback } from "./components/ErrorFallback.jsx";
+import { logout } from "./apis/restApis.js";
+import { ErrorBoundary } from "react-error-boundary";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +73,10 @@ const router = createBrowserRouter([
         path: "/verify",
         element: <VerificationPage />,
       },
+      {
+        path: "/terms-and-conditions",
+        element: <TermsAndConditions />,
+      },
     ],
   },
   {
@@ -80,10 +88,12 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <HelmetProvider>
-    <ToastContainer />
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <ToastContainer />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </ErrorBoundary>
   </HelmetProvider>
   // </StrictMode>
 );
