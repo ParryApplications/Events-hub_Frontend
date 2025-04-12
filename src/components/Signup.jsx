@@ -170,6 +170,7 @@ export default function Signup() {
             <input
               id="bioFieldId"
               type="text"
+              placeholder="Tell us a bit about you..."
               className={`form-control ${
                 formik.touched.bio && formik.errors.bio ? "is-invalid" : ""
               } shadow-sm`}
