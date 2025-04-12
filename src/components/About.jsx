@@ -9,7 +9,8 @@ const About = () => {
         <div className="container">
           <h1 className="display-4 fw-bold">Who We Are</h1>
           <p className="lead">
-            Innovating solutions that drive success and empower businesses.
+            All-in-one platform for discovering, sharing, and managing upcoming
+            events
           </p>
         </div>
       </section>
@@ -20,24 +21,60 @@ const About = () => {
           <div className="col-lg-4 col-md-6 mb-4">
             <div className="info-card">
               <h3>🚀 Our Mission</h3>
-              <p>
-                To redefine possibilities through cutting-edge technology. We
-                aim to build intelligent, scalable, and human-centric solutions
-                that shape the future of industries and elevate user
-                experiences.
-              </p>
+              <ul>
+                <li className="text-start">
+                  <strong className="fw-medium">Connect Communities: </strong>
+                  Bring people together through shared interests and local
+                  events.
+                </li>
+                <li className="text-start">
+                  <strong className="fw-medium">Empower Organizers: </strong>
+                  Give everyone the tools to promote events—big or small.
+                </li>
+                <li className="text-start">
+                  <strong className="fw-medium">Celebrate the Unseen: </strong>
+                  Highlight meaningful events that might otherwise go unnoticed.
+                </li>
+                <li className="text-start">
+                  <strong className="fw-medium">Keep You Informed: </strong>
+                  Ensure you never miss out with timely, friendly reminders.
+                </li>
+                <li className="text-start">
+                  <strong className="fw-medium">Accessible to All: </strong>
+                  Offer a simple, secure, and completely free experience.
+                </li>
+              </ul>
             </div>
           </div>
           <div className="col-lg-4 col-md-6 mb-4">
             <div className="info-card">
               <h3>🌟 Our Values</h3>
-              <ul className="list-unstyled">
-                <li>🔹 **Innovation First:** We challenge the status quo.</li>
-                <li>🔹 **People-Centric:** Technology that empowers lives.</li>
-                <li>
-                  🔹 **Excellence Driven:** Quality in every line of code.
+              <ul>
+                <li className="text-start">
+                  <strong className="fw-medium">Inclusivity: </strong>
+                  We believe every event—big or small, mainstream or
+                  niche—deserves to be seen and celebrated.
                 </li>
-                <li>🔹 **Future Focused:** Adapting to tomorrow, today.</li>
+                <li className="text-start">
+                  <strong className="fw-medium">Transparency & Trust: </strong>
+                  User data is handled with the utmost care, backed by strong
+                  privacy measures like end-to-end encryption.
+                </li>
+                <li className="text-start">
+                  <strong className="fw-medium">Accessibility: </strong>
+                  EventsHub is free and open to all, lowering barriers to
+                  connection and participation.
+                </li>
+                <li className="text-start">
+                  <strong className="fw-medium">Reliability: </strong>
+                  We&rsquo;re committed to timely updates and reminders so our
+                  users never miss out.
+                </li>
+                <li className="text-start">
+                  <strong className="fw-medium">Empowerment: </strong>
+                  We aim to give individuals the tools to share meaningful
+                  experiences and build stronger communities.
+                </li>
               </ul>
             </div>
           </div>
@@ -45,10 +82,21 @@ const About = () => {
             <div className="info-card">
               <h3>🌍 Our Journey</h3>
               <p>
-                What started as a vision has now become a movement. From a
-                passionate team of innovators to a global force driving digital
-                transformation, our journey is one of resilience, evolution, and
-                impact.
+                EventsHub began with a simple idea: to make meaningful events
+                more visible, no matter their size or popularity. We noticed
+                that many incredible gatherings—local meetups, community
+                workshops, indie performances—often went unnoticed, simply
+                because they lacked the reach of bigger events. What started as
+                a passion project quickly grew into a platform designed to
+                connect people through shared experiences. Along the way,
+                we&rsquo;ve focused on keeping the app user-friendly, completely
+                free, and inclusive—because we believe that great events should
+                be accessible to everyone. Today, EventsHub continues to evolve
+                with our community at the heart of everything we do. Whether
+                you&rsquo;re discovering a new event, posting one of your own,
+                or simply exploring what&rsquo;s happening around
+                you—we&rsquo;re here to help you stay connected, inspired, and
+                in the loop.
               </p>
             </div>
           </div>

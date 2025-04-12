@@ -15,14 +15,14 @@ export default function Accordion() {
       <div className="accordion-item">
         <h2 className="accordion-header" id="headingOne">
           <button
-            className="accordion-button"
+            className="accordion-button fw-medium"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#collapseOne"
             aria-expanded="true"
             aria-controls="collapseOne"
           >
-            What is this app about?
+            What does this app do?
           </button>
         </h2>
         <div
@@ -32,8 +32,11 @@ export default function Accordion() {
           data-bs-parent="#faq-accordion"
         >
           <div className="accordion-body">
-            This app is your one-stop hub for discovering, posting, and tracking
-            upcoming events. Never miss out on exciting happenings around you!
+            This app is your all-in-one platform for discovering, sharing, and
+            managing upcoming events, and it&rsquo;s completely free to use.
+            You&rsquo;ll also receive gentle email reminders for the events
+            you&rsquo;ve subscribed to, so you never miss out on exciting
+            opportunities around you.
           </div>
         </div>
       </div>
@@ -41,14 +44,14 @@ export default function Accordion() {
       <div className="accordion-item">
         <h2 className="accordion-header" id="headingTwo">
           <button
-            className="accordion-button collapsed"
+            className="accordion-button collapsed fw-medium"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#collapseTwo"
             aria-expanded="false"
             aria-controls="collapseTwo"
           >
-            How can I find upcoming events?
+            How do I subscribe to an event, and what can I expect afterward?
           </button>
         </h2>
         <div
@@ -57,21 +60,29 @@ export default function Accordion() {
           aria-labelledby="headingTwo"
           data-bs-parent="#faq-accordion"
         >
-          <div className="accordion-body">...</div>
+          <div className="accordion-body">
+            Please note that you can only subscribe to verified events. To
+            subscribe, simply click the bell icon located at the bottom-right
+            corner of the event card. Once subscribed, you&rsquo;ll receive a
+            confirmation via a pop-up message. You'll then receive two gentle
+            reminders: the first one a day before the event, and the second on
+            the day of the event itself. Both reminders are sent around 8 AM
+            IST.
+          </div>
         </div>
       </div>
 
       <div className="accordion-item">
         <h2 className="accordion-header" id="headingThree">
           <button
-            className="accordion-button collapsed"
+            className="accordion-button collapsed fw-medium"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#collapseThree"
             aria-expanded="false"
             aria-controls="collapseThree"
           >
-            How & When do I get notified about events?
+            What&rsquo;s the process, and how do I know if an event is verified?
           </button>
         </h2>
         <div
@@ -81,8 +92,11 @@ export default function Accordion() {
           data-bs-parent="#faq-accordion"
         >
           <div className="accordion-body">
-            When you subscribe to an event, we’ll send you a reminder one day
-            before the event starts.
+            Once a user posts an event, our team will review the event details.
+            Within 24 hours, the event will either be removed or marked as
+            verified. Verified events will display a 'Verified' icon—a white
+            checkmark on a blue background—at the top-left corner of the event
+            card.
           </div>
         </div>
       </div>
@@ -90,14 +104,14 @@ export default function Accordion() {
       <div className="accordion-item">
         <h2 className="accordion-header" id="headingFour">
           <button
-            className="accordion-button collapsed"
+            className="accordion-button collapsed fw-medium"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#collapseFour"
             aria-expanded="false"
             aria-controls="collapseFour"
           >
-            Do I need an account to use the app?
+            Is my personal information safe?
           </button>
         </h2>
         <div
@@ -107,13 +121,14 @@ export default function Accordion() {
           data-bs-parent="#faq-accordion"
         >
           <div className="accordion-body">
-            You can browse events without an account, but to post, subscribe, or
-            get notifications, you'll need to sign up.
+            Yes, the app uses end-to-end encryption, ensuring that even we
+            cannot access your password. You can confidently use the app,
+            knowing your data is secure.
           </div>
         </div>
       </div>
 
-      <div className="accordion-item">
+      {/* <div className="accordion-item">
         <h2 className="accordion-header" id="headingFive">
           <button
             className="accordion-button collapsed"
@@ -123,7 +138,7 @@ export default function Accordion() {
             aria-expanded="false"
             aria-controls="collapseFive"
           >
-            Is the app free to use?
+            Is my personal information safe?
           </button>
         </h2>
         <div
@@ -133,12 +148,14 @@ export default function Accordion() {
           data-bs-parent="#faq-accordion"
         >
           <div className="accordion-body">
-            Yes! The app is completely free to browse and post events.
+            Yes, the app uses end-to-end encryption, ensuring that even we
+            cannot access your password. You can confidently use the app,
+            knowing your data is secure.
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <div className="accordion-item">
+      {/* <div className="accordion-item">
         <h2 className="accordion-header" id="headingSix">
           <button
             className="accordion-button collapsed"
@@ -162,7 +179,7 @@ export default function Accordion() {
             you’ll receive a notification if you're subscribed.
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
