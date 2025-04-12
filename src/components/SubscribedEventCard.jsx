@@ -68,7 +68,7 @@ export default function SubscribedEventCard({ event, rsvpBellHandler }) {
               handleShare(event.eventId);
             }}
           />
-          {!isPastEvent(event.eventDate) && (
+          {event?.verified && !isPastEvent(event.eventDate) && (
             <BiBellOff
               className="responsive-icons"
               onClick={async (e) => {

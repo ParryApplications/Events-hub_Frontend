@@ -63,12 +63,9 @@ export async function saveUser(user) {
 export async function login(user) {
   try {
     const credentials = "Basic " + btoa(`${user.username}:${user.password}`);
-
-    if (localStorage.getItem(HTUA))
-      eventsHubApiClient.defaults.headers["Authorization"] = credentials;
-
+    eventsHubApiClient.defaults.headers["Authorization"] = credentials;
     const response = await eventsHubApiClient.post(POST_USER_LOGIN, user);
-    localStorage.setItem(HTUA, credentials);
+    localStorage.setItem(HTUA, JSON.stringify(response?.data?.data));
     return response.data;
   } catch (err) {
     return {

@@ -185,14 +185,6 @@ export default function EventCard({
             <h3 className="card-title fw-bold text-capitalize d-inline m-0 mb-2">
               {event.eventName}
             </h3>
-            {/* {event.verified === true && (
-              <img
-                src={verifiedIcon}
-                className="event-card-edit-btn ms-1 custom-responsive-normal-icon mb-2"
-                style={{ height: "2em", verticalAlign: "top" }}
-                alt="Verified"
-              />
-            )} */}
           </div>
 
           <img
@@ -202,7 +194,6 @@ export default function EventCard({
             onError={(e) => {
               e.target.onerror = null; //Prevents from infinite loops
               e.target.src = eventCardImage; // Set default image
-              // console.log(`No image posted for eventId: ${event.eventId}`);
             }}
           />
 
@@ -238,21 +229,22 @@ export default function EventCard({
                 className="cursor-pointer"
                 onClick={() => handleShare(event.eventId)}
               />
-              {event?.status
-                ? !isPastEvent(event.eventDate) && (
-                    <BiBellOff
-                      className="cursor-pointer"
-                      size={24}
-                      onClick={async () => await rsvpBellHandler(event)}
-                    />
-                  )
-                : !isPastEvent(event.eventDate) && (
-                    <BiBell
-                      size={24}
-                      className="cursor-pointer"
-                      onClick={async () => await rsvpBellHandler(event)}
-                    />
-                  )}
+              {event?.verified &&
+                (event?.status
+                  ? !isPastEvent(event.eventDate) && (
+                      <BiBellOff
+                        className="cursor-pointer"
+                        size={24}
+                        onClick={async () => await rsvpBellHandler(event)}
+                      />
+                    )
+                  : !isPastEvent(event.eventDate) && (
+                      <BiBell
+                        size={24}
+                        className="cursor-pointer"
+                        onClick={async () => await rsvpBellHandler(event)}
+                      />
+                    ))}
             </div>
           </div>
         </div>
