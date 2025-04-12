@@ -32,12 +32,17 @@ export function isPastEvent(eventDate) {
  * Method will toggle the rsvp state, also calls the backend
  * @param event
  */
-export async function onRsvpButtonClick(userId, eventId, eventDate) {
-  // console.log("RSVP button clicked");
+export async function onRsvpButtonClick(
+  userId,
+  eventId,
+  eventDate,
+  isVerified
+) {
   const body = {
     userId: userId,
     eventId: eventId,
     eventDate: eventDate,
+    verified: isVerified,
   };
   return await toggleRsvpStatus(body);
 }
@@ -104,14 +109,6 @@ export const showToast = (message, type) => {
     },
     icon: type === SUCCESS ? "✅" : "❌", // Emoji-based status icons
   });
-};
-
-export const getGreeting = () => {
-  const hours = new Date().getHours();
-
-  if (hours < 12) return "Good morning!";
-  if (hours < 18) return "Good afternoon!";
-  return "Good evening!";
 };
 
 /**

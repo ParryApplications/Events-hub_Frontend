@@ -67,28 +67,28 @@ export default function Home() {
    * List will be Sorted by Event Date
    */
   async function loadAllEvents_ForNonLoggedInUser() {
+    setLoading(true);
     const allEvents = await getAllEvents();
 
-    if (allEvents && Object.keys(allEvents).length > 0) {
-      const futureEventsFiltered = allEvents.filter(
+    if (allEvents.success && allEvents.data.length > 0) {
+      const futureEventsFiltered = allEvents.data.filter(
         (e) => !isPastEvent(e.eventDate)
       );
 
       const sortedEvents =
         getSortedEventsByEventDateOldToNew(futureEventsFiltered);
       setEventList(sortedEvents);
-      // console.log(eventList);
 
-      const pastEventsFiltered = allEvents.filter((e) =>
+      const pastEventsFiltered = allEvents.data.filter((e) =>
         isPastEvent(e.eventDate)
       );
 
       setPastEventsList(pastEventsFiltered);
-      setLoading(false);
     } else {
-      // console.log("No events found.");
-      showToast("No events found. Please come back later.", ERROR);
+      console.error(allEvents.message);
+      showToast(allEvents.message, allEvents.success ? SUCCESS : ERROR);
     }
+    setLoading(false);
   }
 
   /**
@@ -99,25 +99,23 @@ export default function Home() {
   async function loadAllEvents_ForLoggedInUsers() {
     const allRsvpEvents = await getAllEventsWithRsvpStatus(userDetails?.userId);
 
-    if (allRsvpEvents && Object.keys(allRsvpEvents).length > 0) {
-      const futureRsvpsEventsFiltered = allRsvpEvents.filter(
+    if (allRsvpEvents.success && allRsvpEvents.data.length > 0) {
+      const futureRsvpsEventsFiltered = allRsvpEvents.data.filter(
         (e) => !isPastEvent(e.eventDate)
       );
       const sortedRsvpEvents = getSortedEventsByEventDateOldToNew(
         futureRsvpsEventsFiltered
       );
       setEventList(sortedRsvpEvents);
-      // console.log(eventList);
 
-      const pastRsvpsEventsFiltered = allRsvpEvents.filter((e) =>
+      const pastRsvpsEventsFiltered = allRsvpEvents.data.filter((e) =>
         isPastEvent(e.eventDate)
       );
 
       setPastEventsList(pastRsvpsEventsFiltered);
       setLoading(false);
     } else {
-      // console.log("No events found.");
-      showToast("No events found. Please come back later.", ERROR);
+      showToast(allRsvpEvents.message);
     }
   }
   useEffect(() => {
@@ -143,12 +141,6 @@ export default function Home() {
   useEffect(() => {
     const checkIfUserAuthenticated = () => {
       if (isAuthenticated === true) {
-        // console.log(isGreetDone);
-        // if (!isGreetDone) {
-        //   showToast(`Hi ${userDetails.fullName}, ${getGreeting()}`, SUCCESS);
-        //   isGreetDone.current = true;
-        // }
-
         loadAllEvents_ForLoggedInUsers();
       } else {
         // showToast("Kindly login or signup to enable all features.");
@@ -236,32 +228,20 @@ export default function Home() {
       return;
     }
 
-    const resultNum = await onRsvpButtonClick(
+    const rsvpResult = await onRsvpButtonClick(
       userDetails.userId,
       event.eventId,
-      event.eventDate
+      event.eventDate,
+      event.verified
     );
 
-    // console.log(resultNum, event?.status);
-
-    if (resultNum === 1 && !event?.status) {
-      showToast(
-        `You've successfully subscribed to ${event.eventName} event.`,
-        SUCCESS
-      );
-    } else if (resultNum === 1 && event?.status) {
-      showToast(
-        `You've successfully unsubscribed to ${event.eventName} event.`,
-        SUCCESS
-      );
+    if (rsvpResult.success) {
+      showToast(rsvpResult.message, SUCCESS);
+      event.status = !event.status;
+      updateEventList(event);
     } else {
-      showToast(
-        `Something went wrong while subscribing to ${event.eventName} event.`,
-        ERROR
-      );
+      showToast(rsvpResult.message, ERROR);
     }
-    event.status = !event.status;
-    updateEventList(event);
   }
 
   /**
@@ -273,14 +253,6 @@ export default function Home() {
 
   return (
     <>
-      {isLoading ? (
-        <ProgressBar />
-      ) : (
-        eventList.length === 0 && (
-          <div className="text-center">No events found</div>
-        )
-      )}
-
       {sortByContextMenu?.visible && (
         <SortByContextMenu
           x={sortByContextMenu.x}
@@ -354,6 +326,14 @@ export default function Home() {
           </button>
         )}
       </div>
+
+      {isLoading ? (
+        <ProgressBar />
+      ) : (
+        eventList.length === 0 && (
+          <div className="text-center">No events found</div>
+        )
+      )}
 
       <div className="row">
         <div className="col-12 col-lg-8">

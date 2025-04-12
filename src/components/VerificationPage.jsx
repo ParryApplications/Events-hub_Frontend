@@ -26,14 +26,12 @@ export default function VerificationPage() {
       // console.log(token, userId);
       if (token) {
         const response = await verifyEmailApi(token, userId);
-        // console.log(response);
-        if (response) {
+        if (response.success) {
           setStatus(SUCCESS);
-          showToast(response, SUCCESS);
+          showToast(response.message, SUCCESS);
           setTimeout(() => navigate("/login"), 2500); // Redirect after 2.5 sec
         } else {
-          showToast("Verification failed.", ERROR);
-          throw new Error("Verification failed.");
+          showToast(response.message, ERROR);
         }
       } else {
         setStatus(ERROR);
@@ -41,6 +39,7 @@ export default function VerificationPage() {
       }
     } catch (error) {
       setStatus(ERROR);
+      showToast("Invalid Verification.", ERROR);
     }
   };
 

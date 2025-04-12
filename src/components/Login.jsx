@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import { login } from "../apis/restApis";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
-import { getGreeting, showToast, SUCCESS } from "../utility/CommonUtility";
+import { ERROR, showToast, SUCCESS } from "../utility/CommonUtility";
 import ProgressBar from "./ProgressBar";
 import { useState } from "react";
 
@@ -19,21 +19,16 @@ export default function Login() {
 
   async function submitHandler(values) {
     setLoading(true);
-    // Submit form data to the server
-    // console.log("Form is submitting with Values: ", values);
     const response = await login(values);
+
     setLoading(false);
-    if (response && Object.keys(response).length > 0) {
-      // console.log(response);
-      setUserDetails(response);
+    if (response.success && response.data) {
+      setUserDetails(response.data);
       setIsAuthenticated(true);
       navigate("/");
-      showToast(
-        `Hi ${response.fullName.split(" ")[0]}, ${getGreeting()}`,
-        SUCCESS
-      );
+      showToast(response.message, SUCCESS);
     } else {
-      alert("Invalid username or password");
+      showToast(response.message, ERROR);
     }
     formik.resetForm();
   }
