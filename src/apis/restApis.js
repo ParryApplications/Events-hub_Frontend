@@ -6,7 +6,8 @@ const defaultIssueResponseObj = {
   mmessage: "Something went wrong. Please try again later",
   data: null,
 };
-const HTUA = "htua"; //Auth key for local storage (in reverse)
+const HTUA = "htua"; //User Details under local storage (in reverse)
+const SDERC = "htuacreds"; //Auth key under local storage (in reverse)
 
 //API URL CONSTANTS:
 const EVENT_BASE_URL = "/event/api";
@@ -66,6 +67,7 @@ export async function login(user) {
     eventsHubApiClient.defaults.headers["Authorization"] = credentials;
     const response = await eventsHubApiClient.post(POST_USER_LOGIN, user);
     localStorage.setItem(HTUA, JSON.stringify(response?.data?.data));
+    localStorage.setItem(SDERC, credentials);
     return response.data;
   } catch (err) {
     return {
@@ -83,6 +85,7 @@ export async function login(user) {
 export async function logout() {
   try {
     localStorage.removeItem(HTUA);
+    localStorage.removeItem(SDERC);
     delete eventsHubApiClient.defaults.headers["Authorization"];
     return true;
   } catch (err) {

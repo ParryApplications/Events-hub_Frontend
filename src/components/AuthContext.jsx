@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { eventsHubApiClient } from "../apis/CommonApiUtil";
 
 const AuthContext = createContext();
 
@@ -10,8 +11,10 @@ export default function AuthProvider({ children }) {
 
   useEffect(() => {
     const auth = localStorage.getItem("htua");
-    if (auth) {
+    const authKey = localStorage.getItem("htuacreds");
+    if (auth && authKey) {
       const parsedAuth = JSON.parse(auth);
+      eventsHubApiClient.defaults.headers["Authorization"] = authKey;
       setUserDetails(parsedAuth);
       setIsAuthenticated(true);
     }
