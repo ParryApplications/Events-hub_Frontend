@@ -3,22 +3,22 @@
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.eventshub.events/</loc>
+    <loc>https://www.eventshub.parryapplications.com/</loc>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://www.eventshub.events/login</loc>
+    <loc>https://www.eventshub.parryapplications.com/login</loc>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://www.eventshub.events/about</loc>
+    <loc>https://www.eventshub.parryapplications.com/about</loc>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://www.eventshub.events/signup</loc>
+    <loc>https://www.eventshub.parryapplications.com/signup</loc>
     <priority>0.6</priority>
   </url>
 

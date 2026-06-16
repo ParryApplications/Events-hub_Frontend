@@ -36,7 +36,7 @@ import ProgressBar from "./ProgressBar";
     content="Events, Event Management, Bookings, Concerts, Webinars, standups, standup comedy, fest, college fests"
   />
   <meta name="author" content="ParryApplications" />
-  <link rel="canonical" href="https://www.eventshub.events/" />
+  <link rel="canonical" href="https://www.eventshub.parryapplications.com/" />
 </Helmet>;
 
 export default function Home() {
